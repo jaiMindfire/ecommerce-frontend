@@ -12,16 +12,19 @@ import { useGetProductsQuery } from "../features/products/productsApi";
 import ProductCard from "../components/ProductCard";
 import { useLocation } from "react-router-dom";
 import ProductDetailPage from "./ProductDetailPage";
+import LoadingGrid from "../loaders/LoadingProducts";
+import NoDataFound from "../components/NoDataFound";
 
 const ProductListPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const search = useSelector((state: RootState) => state.products.searchTerm);
   const location = useLocation();
-  const limit = 4;
+  const limit = 8;
   const {
     data: products,
     error,
     isLoading,
+    isFetching,
   } = useGetProductsQuery({ search, page, limit });
 
   const handlePageChange = (
@@ -33,15 +36,15 @@ const ProductListPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      {isLoading ? (
-        <CircularProgress />
+      {isFetching ? (
+        <LoadingGrid/>
       ) : error ? (
         <Typography color="error">Error loading products</Typography>
-      ) : location.pathname === "/" ? (
+      ) : products?.data?.length ? (
         <>
           <Grid container spacing={3}>
             {products?.data?.map((product) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+              <Grid item xs={12} sm={6} md={5} lg={3} key={product._id}>
                 <ProductCard product={product} />
               </Grid>
             ))}
@@ -55,7 +58,7 @@ const ProductListPage: React.FC = () => {
           </Box>
         </>
       ) : (
-        <ProductDetailPage />
+        <NoDataFound />
       )}
     </Box>
   );
