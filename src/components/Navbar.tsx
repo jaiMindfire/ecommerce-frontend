@@ -70,7 +70,7 @@ const Navbar: React.FC = () => {
   const [search, setSearch] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { toggleTheme, isDarkMode } = useTheme();
-  // const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -138,9 +138,9 @@ const Navbar: React.FC = () => {
 
 
           <IconButton color="inherit">
-            {/* <Badge badgeContent={cartItems.length} color="error">
+            <Badge badgeContent={cartItems.length} color="error">
               <ShoppingCartIcon onClick={() => navigate("/cart")} />
-            </Badge> */}
+            </Badge>
           </IconButton>
 
 

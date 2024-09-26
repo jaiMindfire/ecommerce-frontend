@@ -14,8 +14,8 @@ import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedProduct } from "../features/products/productsSlice";
 import { useNavigate } from "react-router-dom";
-// import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
-// import { useAddToCartMutation } from "../features/cart/cartApi";
+import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
+import { useAddToCartMutation } from "../features/cart/cartApi";
 import { RootState } from "../redux/store";
 
 interface ProductCardProps {
@@ -53,31 +53,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const [addToCart] = useAddToCartMutation();
+  const [addToCart] = useAddToCartMutation();
 
-  // const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const handleProductSelect = () => {
     dispatch(setSelectedProduct(product));
     navigate(`/products/${product._id}`);
   };
 
-  // const handleAddToCart = (e: any) => {
-  //   e.stopPropagation();
-  //   const existingItem = cartItems.find(
-  //     (item) => item.product?._id === product._id
-  //   );
-  //   dispatch(addItemToCart({ product, quantity: 1 }));
-  //   if (!existingItem) {
-  //     addToCart({
-  //       productId: product._id,
-  //       quantity: 1,
-  //       product,
-  //     })
-  //       .unwrap()
-  //       .catch((err) => removeItemFromCart(product._id));
-  //   }
-  // };
+  const handleAddToCart = (e: any) => {
+    e.stopPropagation();
+    const existingItem = cartItems.find(
+      (item) => item.product?._id === product._id
+    );
+    dispatch(addItemToCart({ product, quantity: 1 }));
+    if (!existingItem) {
+      addToCart({
+        productId: product._id,
+        quantity: 1,
+        product,
+      })
+        .unwrap()
+        .catch((err) => removeItemFromCart(product._id));
+    }
+  };
 
   return (
     <StyledCard onClick={handleProductSelect}>
@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           color="primary"
           fullWidth
           startIcon={<ShoppingCartIcon />}
-          // onClick={handleAddToCart}
+          onClick={handleAddToCart}
         >
           Add to Cart
         </AddToCartButton>

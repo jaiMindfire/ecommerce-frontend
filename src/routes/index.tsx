@@ -3,12 +3,11 @@ import React, { lazy } from "react";
 import App from "../App";
 import NavbarLayout from "../layouts/NavbarLayout";
 
-// const Home = lazy(() => import('Pages/Home'));
 const LoginPage = lazy(() => import("../pages/LoginPage"));
 const SignupPage = lazy(() => import("../pages/SignupPage"));
 const ProductsPage = lazy(() => import("../pages/ProductListPage"));
 const ProductDetail = lazy(() => import("../pages/ProductDetailPage"));
-// const CartDetail = lazy(() => import("../pages/CartPage"));
+const CartDetail = lazy(() => import("../pages/CartPage"));
 
 export const routes = createBrowserRouter([
   {
@@ -26,10 +25,10 @@ export const routes = createBrowserRouter([
             path: "products/:id",
             element: <ProductDetail />,
           },
-          // {
-          //   path: "/cart",
-          //   element: <CartDetail />,
-          // },
+          {
+            path: "/cart",
+            element: <CartDetail />,
+          },
         ],
       },
       {
