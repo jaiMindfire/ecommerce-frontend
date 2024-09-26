@@ -70,7 +70,7 @@ const Navbar: React.FC = () => {
   const [search, setSearch] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { toggleTheme, isDarkMode } = useTheme();
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  // const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -102,7 +102,7 @@ const Navbar: React.FC = () => {
     <>
       <AppBar position="static" color={isDarkMode ? "default" : "primary"}>
         <Toolbar>
-          {/* Menu Icon for Drawer */}
+
           <IconButton
             edge="start"
             color="inherit"
@@ -111,7 +111,7 @@ const Navbar: React.FC = () => {
             <MenuIcon />
           </IconButton>
 
-          {/* Logo */}
+
           <Typography
             variant="h6"
             component="div"
@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
             E-Commerce
           </Typography>
 
-          {/* Search Input */}
+
           <Search>
             <SearchIconWrapper>
               <MenuIcon />
@@ -133,17 +133,17 @@ const Navbar: React.FC = () => {
             />
           </Search>
 
-          {/* Dark/Light Mode Toggle */}
+
           <Switch checked={isDarkMode} onChange={toggleTheme} />
 
-          {/* Cart Icon with Badge */}
+
           <IconButton color="inherit">
-            <Badge badgeContent={cartItems.length} color="error">
+            {/* <Badge badgeContent={cartItems.length} color="error">
               <ShoppingCartIcon onClick={() => navigate("/cart")} />
-            </Badge>
+            </Badge> */}
           </IconButton>
 
-          {/* User Login/Logout Avatar */}
+
           {isLoggedIn ? (
             <>
               <IconButton edge="end" color="inherit" onClick={handleMenu}>
@@ -179,7 +179,7 @@ const Navbar: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer */}
+
       <Drawer
         anchor="left"
         open={isDrawerOpen}
