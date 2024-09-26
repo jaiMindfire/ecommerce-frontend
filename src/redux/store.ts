@@ -1,23 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import { productsApi } from "../features/products/productsApi";
+import { productsApi } from "../features/products/productsApi";
 import { authApi } from "../features/auth/authApi";
 import authReducer from "../features/auth/authSlice";
-// import productsReducer from "../features/products/productsSlice";
+import productsReducer from "../features/products/productsSlice";
 // import cartReducer from "../features/cart/cartSlice";
 // import { cartApi } from "../features/cart/cartApi";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // products: productsReducer,
+    products: productsReducer,
     // cart: cartReducer,
-    // [productsApi.reducerPath]: productsApi.reducer,
+    [productsApi.reducerPath]: productsApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
     // [cartApi.reducerPath]: cartApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
-      // productsApi.middleware,
+      productsApi.middleware,
       authApi.middleware,
       // cartApi.middleware
     ),
