@@ -126,6 +126,7 @@ const CartPage: React.FC = () => {
 
     try {
       await checkout().unwrap();
+      refetch();
       dispatch(setChceckedOut(items))
       localStorage.setItem("totalAmount", JSON.stringify(totalAmount));
       localStorage.setItem("totalItems", JSON.stringify(totalItems));
