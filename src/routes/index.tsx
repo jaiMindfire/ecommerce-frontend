@@ -8,6 +8,7 @@ const SignupPage = lazy(() => import("../pages/SignupPage"));
 const ProductsPage = lazy(() => import("../pages/ProductListPage"));
 const ProductDetail = lazy(() => import("../pages/ProductDetailPage"));
 const CartDetail = lazy(() => import("../pages/CartPage"));
+const PageNotFound = lazy(() => import("../components/404"));
 
 export const routes = createBrowserRouter([
   {
@@ -29,15 +30,19 @@ export const routes = createBrowserRouter([
             path: "/cart",
             element: <CartDetail />,
           },
+          {
+            path: "/login",
+            element: <LoginPage />,
+          },
+          {
+            path: "/signup",
+            element: <SignupPage />,
+          },
+          {
+            path: "*",
+            element: <PageNotFound />,
+          },
         ],
-      },
-      {
-        path: "/login",
-        element: <LoginPage />,
-      },
-      {
-        path: "/signup",
-        element: <SignupPage />,
       },
     ],
   },

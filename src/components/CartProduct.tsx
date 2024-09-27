@@ -1,4 +1,3 @@
-// src/components/Cart/CartItem.tsx
 import React from "react";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import { CartItem } from "../types/cartTypes";
@@ -10,8 +9,8 @@ import {
   CardMedia,
   IconButton,
   Button,
-  useTheme,
   styled,
+  useTheme,
 } from "@mui/material";
 
 interface CartItemProps {
@@ -22,14 +21,28 @@ interface CartItemProps {
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
   marginBottom: theme.spacing(2),
+  padding: theme.spacing(2),
+  boxShadow: theme.shadows[3],
+  borderRadius: theme.shape.borderRadius,
+  transition: "transform 0.2s ease-in-out",
+  "&:hover": {
+    transform: "translateY(-3px)",
+    boxShadow: theme.shadows[5],
+  },
   [theme.breakpoints.down("sm")]: {
     flexDirection: "column",
+    alignItems: "flex-start",
   },
 }));
 
 const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
-  width: 150,
+  width: 120,
+  height: 120,
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[1],
   [theme.breakpoints.down("sm")]: {
     width: "100%",
     height: 200,
@@ -37,16 +50,21 @@ const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
 }));
 
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
+  flexGrow: 1,
+  paddingLeft: theme.spacing(2),
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  flexGrow: 1,
+  [theme.breakpoints.down("sm")]: {
+    paddingLeft: 0,
+    marginTop: theme.spacing(2),
+  },
 }));
 
 const QuantityControl = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  marginTop: theme.spacing(1),
+  marginTop: theme.spacing(2),
 }));
 
 const CartProduct: React.FC<CartItemProps> = ({
@@ -54,6 +72,7 @@ const CartProduct: React.FC<CartItemProps> = ({
   handleUpdateQuantity,
   onRemove,
 }) => {
+  const theme = useTheme();
 
   return (
     <StyledCard>
@@ -62,30 +81,54 @@ const CartProduct: React.FC<CartItemProps> = ({
         aria-label={`Image of ${item.product.name}`}
       />
       <StyledCardContent>
-        <Typography variant="h6" component="div">
-          {item.product?.name}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Price: ${item.product?.price.toFixed(2)}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Total: ${(item.product?.price * item.quantity).toFixed(2)}
-        </Typography>
+        <Box>
+          <Typography variant="h6" component="div" gutterBottom>
+            {item.product?.name}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Price: ${item.product?.price.toFixed(2)}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Total: ${(item.product?.price * item.quantity).toFixed(2)}
+          </Typography>
+        </Box>
         <QuantityControl>
           <IconButton
             onClick={() =>
               handleUpdateQuantity(item.quantity - 1, item.quantity)
             }
             aria-label="Decrease quantity"
+            size="small"
+            sx={{
+              backgroundColor: theme.palette.grey[200],
+              "&:hover": {
+                backgroundColor: theme.palette.grey[300],
+              },
+            }}
           >
             <Remove />
           </IconButton>
-          <Typography sx={{ margin: "0 10px" }}>{item.quantity}</Typography>
+          <Typography
+            sx={{
+              margin: "0 10px",
+              fontWeight: 500,
+              color: theme.palette.text.primary,
+            }}
+          >
+            {item.quantity}
+          </Typography>
           <IconButton
             onClick={() =>
               handleUpdateQuantity(item.quantity + 1, item.quantity)
             }
             aria-label="Increase quantity"
+            size="small"
+            sx={{
+              backgroundColor: theme.palette.grey[200],
+              "&:hover": {
+                backgroundColor: theme.palette.grey[300],
+              },
+            }}
           >
             <Add />
           </IconButton>

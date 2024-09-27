@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import {
   Box,
@@ -13,41 +13,39 @@ import {
   Paper,
   TextField,
   Typography,
+  useTheme,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSignupMutation } from "../features/auth/authApi";
-import { toast } from "react-toastify";
-import { BackgroundImage } from "./LoginPage";
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  background: "linear-gradient(145deg, #f3f4f6, #ffffff)",
-  borderRadius: theme.shape.borderRadius * 2,
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(2, 0),
-  padding: theme.spacing(1, 4),
-  borderRadius: theme.shape.borderRadius * 4,
-  transition: "all 0.3s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-2px)",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-  },
-}));
+import { BackgroundImage, StyledButton, StyledPaper } from "./LoginPage";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const [signup] = useSignupMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const theme = useTheme();
+
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -72,10 +70,16 @@ const SignupPage: React.FC = () => {
           email: values.email,
           password: values.password,
         }).unwrap();
-        toast.success("Signup successful");
-        navigate("/login");
-      } catch (error) {
-        toast.error("Signup failed");
+        setSnackbarMessage("Signup successful");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      } catch (error: any) {
+        setSnackbarMessage(error?.data?.message);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       }
     },
   });
@@ -86,6 +90,10 @@ const SignupPage: React.FC = () => {
 
   const handleClickShowConfirmPassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -104,7 +112,11 @@ const SignupPage: React.FC = () => {
           <Typography
             component="h1"
             variant="h4"
-            sx={{ mb: 4, fontWeight: "bold", color: "primary.main" }}
+            sx={{
+              mb: 4,
+              fontWeight: "bold",
+              color: theme.palette.mode === "dark" ? "white" : "primary.main",
+            }}
           >
             Signup
           </Typography>
@@ -121,6 +133,9 @@ const SignupPage: React.FC = () => {
                   onBlur={formik.handleBlur}
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
+                  InputLabelProps={{
+                    style: { color: theme.palette.text.primary },
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -205,8 +220,31 @@ const SignupPage: React.FC = () => {
               Signup
             </StyledButton>
           </form>
+          <Box mt={2}>
+            <Typography variant="body2">
+              Already have an account?{" "}
+              <Link to="/login" color="primary">
+                Login
+              </Link>
+            </Typography>
+          </Box>
         </StyledPaper>
       </Box>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

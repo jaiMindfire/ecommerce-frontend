@@ -1,20 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   Grid,
   Card,
   CardMedia,
-  CardContent,
   Chip,
   Button,
   styled,
+  CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import { Shop, ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByIdQuery } from "../features/products/productsApi";
+import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
+import { useAddToCartMutation } from "../features/cart/cartApi";
+import { setChceckedOut } from "../features/products/productsSlice";
+import useAddToCart from "../hooks/useAddToCart";
 
 const ProductImage = styled(CardMedia)(({ theme }) => ({
   height: 400,
@@ -38,21 +44,60 @@ const ActionButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const ProductDetailPage = () => {
-  //   const product = useSelector((state: RootState) => state.products.selectedProduct);
+const ProductDetailPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { data: product, error, isLoading } = useGetProductByIdQuery(id || "");
+  const {
+    data: product,
+    error,
+    isLoading: isLoadingProduct,
+    refetch,
+  } = useGetProductByIdQuery(id || "");
+  const checkedOutItems = useSelector(
+    (state: RootState) => state.products.checkedOutItems
+  );
+  const [addToCart, { isLoading }] = useAddToCartMutation();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+  const isInCart = cartItems.find((item) => item.product?._id === product?._id);
+  const isInCheckoutItems = checkedOutItems.find(
+    (item) => item.product._id === product?._id
+  );
+
+  useEffect(() => {
+    console.log(isInCheckoutItems, "dddd");
+    if (isInCheckoutItems) {
+      refetch();
+      const newItems = checkedOutItems.filter(
+        (item) => item.product?._id !== product?._id
+      );
+      dispatch(setChceckedOut(newItems));
+    }
+  }, []);
+
+  const {
+    handleAddToCart,
+    snackbarMessage,
+    snackbarSeverity,
+    openSnackbar,
+    handleSnackbarClose,
+  } = useAddToCart();
+
+  if (isLoadingProduct) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Typography variant="h6">Failed to load product.</Typography>;
+  }
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <Card>
-            <ProductImage
-              //   component="img"
-              image={product?.imageUrl}
-              //   alt={product.name}
-            />
+            <ProductImage image={product?.imageUrl} title={product?.name} />
           </Card>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -78,14 +123,39 @@ const ProductDetailPage = () => {
             <ActionButton
               variant="contained"
               color="primary"
-              startIcon={<ShoppingCartIcon />}
-              disabled={product?.stock === 0}
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <ShoppingCartIcon />
+                )
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(product, navigate);
+              }}
+              disabled={product?.stock === 0 || isLoading}
             >
-              Add to Cart
+              {isInCart ? "Go To Cart" : "Add To Cart"}
             </ActionButton>
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
