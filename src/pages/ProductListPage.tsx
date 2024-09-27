@@ -1,65 +1,77 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
-  CircularProgress,
   Grid,
-  Pagination,
   Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useGetProductsQuery } from "../features/products/productsApi";
 import ProductCard from "../components/ProductCard";
-import { useLocation } from "react-router-dom";
-import ProductDetailPage from "./ProductDetailPage";
 import LoadingGrid from "../loaders/LoadingProducts";
 import NoDataFound from "../components/NoDataFound";
 
 const ProductListPage: React.FC = () => {
   const [page, setPage] = useState(1);
+  const [productsList, setProductsList] = useState<any[]>([]); 
+  const [hasMore, setHasMore] = useState(true);
   const search = useSelector((state: RootState) => state.products.searchTerm);
-  const location = useLocation();
-  const limit = 8;
-  const {
-    data: products,
-    error,
-    isLoading,
-    isFetching,
-  } = useGetProductsQuery({ search, page, limit });
+  const limit = 10;
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value);
+  const { data: products, error, isLoading, isFetching } = useGetProductsQuery({
+    search,
+    page,
+    limit,
+  });
+
+  // Append new products when data is fetched
+  useEffect(() => {
+    if (products?.data) {
+      setProductsList((prevProducts) => [...prevProducts, ...products.data]);
+      if (products.data.length < limit) {
+        setHasMore(false);
+      }
+    }
+  }, [products]);
+
+  // Infinite scroll event
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.scrollHeight - 100 &&
+      !isFetching &&
+      hasMore
+    ) {
+      setPage((prevPage) => prevPage + 1);
+    }
   };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFetching, hasMore]);
 
   return (
     <Box sx={{ p: 3 }}>
-      {isFetching ? (
-        <LoadingGrid/>
-      ) : error ? (
-        <Typography color="error">Error loading products</Typography>
-      ) : products?.data?.length ? (
-        <>
-          <Grid container spacing={3}>
-            {products?.data?.map((product) => (
-              <Grid item xs={12} sm={6} md={5} lg={3} key={product._id}>
-                <ProductCard product={product} />
-              </Grid>
-            ))}
+      <Grid container spacing={3}>
+        {productsList?.map((product) => (
+          <Grid item xs={12} sm={6} md={5} lg={3} key={product._id}>
+            <ProductCard product={product} />
           </Grid>
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <Pagination
-              count={Math.ceil((products?.pagination?.totalItems || 0) / limit)}
-              page={page}
-              onChange={handlePageChange}
-            />
-          </Box>
-        </>
-      ) : (
-        <NoDataFound />
+        ))}
+      </Grid>
+      
+      {isFetching && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <LoadingGrid />
+        </Box>
       )}
+
+      {!isFetching && productsList.length === 0 && <NoDataFound />}
+
+      {error && <Typography color="error">Error loading products</Typography>}
     </Box>
   );
 };
