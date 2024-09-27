@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import {
   Box,
@@ -13,27 +13,34 @@ import {
   Paper,
   TextField,
   Typography,
+  useTheme,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../features/auth/authApi";
 import { setCredentials } from "../features/auth/authSlice";
-import { toast } from "react-toastify";
+import { RootState } from "../redux/store";
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
+export const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  background: "linear-gradient(145deg, #f3f4f6, #ffffff)",
+  background:
+    theme.palette.mode === "dark"
+      ? "linear-gradient(145deg, #424242, #303030)"
+      : "linear-gradient(145deg, #f3f4f6, #ffffff)",
   borderRadius: theme.shape.borderRadius * 2,
   boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+  color: theme.palette.text.primary,
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
+export const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(2, 0),
   padding: theme.spacing(1, 4),
   borderRadius: theme.shape.borderRadius * 4,
@@ -44,7 +51,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-export const BackgroundImage = styled(Box)({
+export const BackgroundImage = styled(Box)(({ theme }) => ({
   position: "absolute",
   top: 0,
   left: 0,
@@ -54,20 +61,37 @@ export const BackgroundImage = styled(Box)({
     "url('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2029&q=80')",
   backgroundSize: "cover",
   backgroundPosition: "center",
-  opacity: 0.1,
+  opacity: theme.palette.mode === "dark" ? 0.2 : 0.1,
   zIndex: -1,
-});
+}));
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [login] = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
+  const theme = useTheme();
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+  const location = useLocation();
+  const destination = location.state;
+  console.log(location.state,'state')
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
     password: Yup.string().required("Required"),
   });
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -79,16 +103,29 @@ const LoginPage: React.FC = () => {
       try {
         const userData = await login(values).unwrap();
         dispatch(setCredentials(userData));
-        toast.success("Login successful");
-        navigate("/");
-      } catch (error) {
-        toast.error("Login failed");
+        setSnackbarMessage("Login successful");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+        console.log(destination)
+        if (destination) {
+          navigate(destination);
+        } else {
+          navigate("/");
+        }
+      } catch (error: any) {
+        setSnackbarMessage(error?.data?.message);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       }
     },
   });
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -107,7 +144,11 @@ const LoginPage: React.FC = () => {
           <Typography
             component="h1"
             variant="h4"
-            sx={{ mb: 4, fontWeight: "bold", color: "primary.main" }}
+            sx={{
+              mb: 4,
+              fontWeight: "bold",
+              color: theme.palette.mode === "dark" ? "white" : "primary.main",
+            }}
           >
             Login
           </Typography>
@@ -124,6 +165,9 @@ const LoginPage: React.FC = () => {
                   onBlur={formik.handleBlur}
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
+                  InputLabelProps={{
+                    style: { color: theme.palette.text.primary },
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -168,8 +212,31 @@ const LoginPage: React.FC = () => {
               Login
             </StyledButton>
           </form>
+          <Box mt={2}>
+            <Typography variant="body2">
+              Don't have an account yet?{" "}
+              <Link to="/signup" color="primary">
+                Signup
+              </Link>
+            </Typography>
+          </Box>
         </StyledPaper>
       </Box>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
