@@ -21,6 +21,7 @@ import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
 import { useAddToCartMutation } from "../features/cart/cartApi";
 import { setChceckedOut } from "../features/products/productsSlice";
 import useAddToCart from "../hooks/useAddToCart";
+import { usePopup } from "../context/LoginPopupContext";
 
 const ProductImage = styled(CardMedia)(({ theme }) => ({
   height: 400,
@@ -61,6 +62,9 @@ const ProductDetailPage: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   const isInCart = cartItems.find((item) => item.product?._id === product?._id);
+
+  const { openModal } = usePopup();
+
   const isInCheckoutItems = checkedOutItems.find(
     (item) => item.product._id === product?._id
   );
@@ -132,7 +136,7 @@ const ProductDetailPage: React.FC = () => {
               }
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(product, navigate);
+                handleAddToCart(product, navigate, isLoggedIn, usePopup);
               }}
               disabled={product?.stock === 0 || isLoading}
             >

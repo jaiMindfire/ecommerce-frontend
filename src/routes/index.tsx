@@ -3,8 +3,8 @@ import React, { lazy } from "react";
 import App from "../App";
 import NavbarLayout from "../layouts/NavbarLayout";
 
-const LoginPage = lazy(() => import("../pages/LoginPage"));
-const SignupPage = lazy(() => import("../pages/SignupPage"));
+// const LoginPage = lazy(() => import("../pages/LoginPage"));
+// const SignupPage = lazy(() => import("../pages/SignupPage"));
 const ProductsPage = lazy(() => import("../pages/ProductListPage"));
 const ProductDetail = lazy(() => import("../pages/ProductDetailPage"));
 const CartDetail = lazy(() => import("../pages/CartPage"));
@@ -30,14 +30,14 @@ export const routes = createBrowserRouter([
             path: "/cart",
             element: <CartDetail />,
           },
-          {
-            path: "/login",
-            element: <LoginPage />,
-          },
-          {
-            path: "/signup",
-            element: <SignupPage />,
-          },
+          // {
+          //   path: "/login",
+          //   element: <LoginPage />,
+          // },
+          // {
+          //   path: "/signup",
+          //   element: <SignupPage />,
+          // },
           {
             path: "*",
             element: <PageNotFound />,

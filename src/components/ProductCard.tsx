@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useAddToCartMutation } from "../features/cart/cartApi";
 import { RootState } from "../redux/store";
 import useAddToCart from "../hooks/useAddToCart";
+import { usePopup } from "../context/LoginPopupContext";
 
 interface ProductCardProps {
   product: Product;
@@ -71,6 +72,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.find((item) => item.product?._id === product._id);
 
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+
+  const { openModal } = usePopup();
+
   const handleProductSelect = () => {
     dispatch(setSelectedProduct(product));
     navigate(`/products/${product._id}`);
@@ -82,7 +87,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     snackbarSeverity,
     openSnackbar,
     handleSnackbarClose,
-    isLoading
+    isLoading,
   } = useAddToCart();
 
   return (
@@ -132,7 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               }
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(product, navigate);
+                handleAddToCart(product, navigate, isLoggedIn, openModal);
               }}
             >
               {isInCart ? "Go To Cart" : "Add To Cart"}
