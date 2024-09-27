@@ -25,6 +25,10 @@ import { logout } from "../features/auth/authSlice";
 import { setSearchTerm } from "../features/products/productsSlice";
 import { useTheme } from "../context/ThemeContext";
 import { styled, alpha } from "@mui/material/styles";
+import {
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
+} from "@mui/icons-material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -78,11 +82,11 @@ const Navbar: React.FC = () => {
     dispatch(setSearchTerm(e.target.value));
   };
 
-  const handleChange = (e:any) =>{
-    if(e.target.value ===""){
-      dispatch(setSearchTerm(e.target.value))
+  const handleChange = (e: any) => {
+    if (e.target.value === "") {
+      dispatch(setSearchTerm(e.target.value));
     }
-  }
+  };
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -106,7 +110,6 @@ const Navbar: React.FC = () => {
     <>
       <AppBar position="static" color={isDarkMode ? "default" : "primary"}>
         <Toolbar>
-
           {/* <IconButton
             edge="start"
             color="inherit"
@@ -115,16 +118,18 @@ const Navbar: React.FC = () => {
             <MenuIcon />
           </IconButton> */}
 
-
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, cursor: "pointer" }}
-            onClick={() => navigate('/')}
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", sm: "block" },
+              cursor: "pointer",
+            }}
+            onClick={() => navigate("/")}
           >
             E-Commerce
           </Typography>
-
 
           <Search>
             <SearchIconWrapper>
@@ -142,16 +147,18 @@ const Navbar: React.FC = () => {
             />
           </Search>
 
-
-          <Switch checked={isDarkMode} onChange={toggleTheme} />
-
+          <Switch
+            checked={isDarkMode}
+            onChange={toggleTheme}
+            icon={<LightModeIcon />}
+            checkedIcon={<DarkModeIcon />}
+          />
 
           <IconButton color="inherit">
             <Badge badgeContent={cartItems.length} color="error">
               <ShoppingCartIcon onClick={() => navigate("/cart")} />
             </Badge>
           </IconButton>
-
 
           {isLoggedIn ? (
             <>
@@ -189,7 +196,6 @@ const Navbar: React.FC = () => {
           )}
         </Toolbar>
       </AppBar>
-
 
       <Drawer
         anchor="left"
