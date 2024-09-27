@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,15 +9,18 @@ import {
   Box,
   Tooltip,
   Chip,
+  CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Product } from "../types/prodctsType";
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedProduct } from "../features/products/productsSlice";
 import { useNavigate } from "react-router-dom";
-import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
 import { useAddToCartMutation } from "../features/cart/cartApi";
 import { RootState } from "../redux/store";
+import useAddToCart from "../hooks/useAddToCart";
 
 interface ProductCardProps {
   product: Product;
@@ -55,11 +58,15 @@ export const AddToCartButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const OutOfStockText = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  color: theme.palette.error.main,
+  fontWeight: "bold",
+}));
+
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [addToCart] = useAddToCartMutation();
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.find((item) => item.product?._id === product._id);
@@ -69,70 +76,88 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     navigate(`/products/${product._id}`);
   };
 
-  const handleAddToCart = (e: any) => {
-    e.stopPropagation();
-    dispatch(addItemToCart({ product, quantity: 1 }));
-    if (isInCart) {
-      navigate("/cart");
-    } else {
-      addToCart({
-        productId: product._id,
-        quantity: 1,
-        product,
-      })
-        .unwrap()
-        .catch((err) => removeItemFromCart(product._id));
-    }
-  };
+  const {
+    handleAddToCart,
+    snackbarMessage,
+    snackbarSeverity,
+    openSnackbar,
+    handleSnackbarClose,
+    isLoading
+  } = useAddToCart();
 
   return (
-    <StyledCard onClick={handleProductSelect}>
-      <Box position="relative">
-        <StyledCardMedia image={product.imageUrl} title={product.name} />
-        <Chip
-          label={(product?.stock || 0) > 0 ? "In Stock" : "Out of Stock"}
-          color={(product?.stock || 0) > 0 ? "success" : "error"}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8, // Adjusts the position to the top-right corner
-          }}
-        />
-      </Box>
-      <CardContent>
-        <Tooltip title={product.name}>
-          <Typography
-            gutterBottom
-            variant="subtitle1"
-            component="h3"
-            height="50px"
-            textOverflow="ellipsis"
-          >
-            {product.name.length > 20
-              ? `${product.name.substring(0, 20)}...`
-              : product.name}
+    <>
+      <StyledCard onClick={handleProductSelect}>
+        <Box position="relative">
+          <StyledCardMedia image={product.imageUrl} title={product.name} />
+          <Chip
+            label={(product?.stock || 0) > 0 ? "In Stock" : "Out of Stock"}
+            color={(product?.stock || 0) > 0 ? "success" : "error"}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+            }}
+          />
+        </Box>
+        <CardContent>
+          <Tooltip title={product.name}>
+            <Typography
+              gutterBottom
+              variant="subtitle1"
+              component="h3"
+              height="50px"
+              textOverflow="ellipsis"
+            >
+              {product.name.length > 20
+                ? `${product.name.substring(0, 20)}...`
+                : product.name}
+            </Typography>
+          </Tooltip>
+          <Typography variant="h6" color="primary" gutterBottom>
+            ${product.price.toFixed(2)}
           </Typography>
-        </Tooltip>
-        {/* <Typography variant="body2" color="text.secondary" paragraph>
-          {product.description.length > 80
-            ? `${product.description.substring(0, 80)}...`
-            : product.description}
-        </Typography> */}
-        <Typography variant="h6" color="primary" gutterBottom>
-          ${product.price.toFixed(2)}
-        </Typography>
-        <AddToCartButton
-          variant="contained"
-          color="primary"
-          fullWidth
-          startIcon={<ShoppingCartIcon />}
-          onClick={handleAddToCart}
-          disabled={product?.stock === 0}
+
+          {(product?.stock || 0) > 0 ? (
+            <AddToCartButton
+              variant="contained"
+              color="primary"
+              fullWidth
+              startIcon={
+                isLoading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <ShoppingCartIcon />
+                )
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(product, navigate);
+              }}
+            >
+              {isInCart ? "Go To Cart" : "Add To Cart"}
+            </AddToCartButton>
+          ) : (
+            <OutOfStockText>Out of Stock</OutOfStockText>
+          )}
+        </CardContent>
+      </StyledCard>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
         >
-          {isInCart ? "Go To Cart" : "Add To Cart"}
-        </AddToCartButton>
-      </CardContent>
-    </StyledCard>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
