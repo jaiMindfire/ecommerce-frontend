@@ -6,12 +6,7 @@ export interface UserCredentials {
   
  
   export interface AuthResponse {
-    user: {
-      _id: string;
-      email: string;
-      username: string;
-      role: 'admin' | 'user';
-    };
+    userName: string,
     token: string;
   }
   

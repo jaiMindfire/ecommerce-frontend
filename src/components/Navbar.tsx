@@ -14,7 +14,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import {
-  Menu as MenuIcon,
+  Search as SerachIcon,
   ShoppingCart as ShoppingCartIcon,
   AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
@@ -67,7 +67,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Navbar: React.FC = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { toggleTheme, isDarkMode } = useTheme();
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -75,10 +74,15 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+  const handleSearch = (e: any) => {
     dispatch(setSearchTerm(e.target.value));
   };
+
+  const handleChange = (e:any) =>{
+    if(e.target.value ===""){
+      dispatch(setSearchTerm(e.target.value))
+    }
+  }
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -103,19 +107,20 @@ const Navbar: React.FC = () => {
       <AppBar position="static" color={isDarkMode ? "default" : "primary"}>
         <Toolbar>
 
-          <IconButton
+          {/* <IconButton
             edge="start"
             color="inherit"
             onClick={() => setDrawerOpen(true)}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
 
 
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, cursor: "pointer" }}
+            onClick={() => navigate('/')}
           >
             E-Commerce
           </Typography>
@@ -123,12 +128,16 @@ const Navbar: React.FC = () => {
 
           <Search>
             <SearchIconWrapper>
-              <MenuIcon />
+              <SerachIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
-              value={search}
-              onChange={handleSearch}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch(e);
+                }
+              }}
+              onChange={handleChange}
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
@@ -150,7 +159,9 @@ const Navbar: React.FC = () => {
                 <Avatar
                   alt="User Avatar"
                   src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"
-                />
+                >
+                  JB
+                </Avatar>
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
