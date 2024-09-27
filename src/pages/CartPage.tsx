@@ -1,12 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
   Typography,
-  Button,
   Grid,
   CircularProgress,
-  IconButton,
+  Snackbar,
+  Alert,
+  Button,
+  Card,
+  CardContent,
+  Divider,
 } from "@mui/material";
 import { RootState } from "../redux/store";
 import {
@@ -26,14 +30,22 @@ import {
 import CartProduct from "../components/CartProduct";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../types/cartTypes";
-import { AddToCartButton } from "../components/ProductCard";
+import OrderSuccessNotification from "./OrderSuccessPage";
+import NoItemsInCart from "../components/NoCartItems";
+import { setChceckedOut } from "../features/products/productsSlice";
 
 const CartPage: React.FC = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.token);
   const items = useSelector(selectCartItems);
-  // const newItems = useSelector((state: RootState) => state.cart.newItems);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
+    "success"
+  );
+  const [showOrder, setShowOrder] = useState(false);
 
   const {
     data: cartItems,
@@ -45,14 +57,13 @@ const CartPage: React.FC = () => {
   const [updateCartItem] = useUpdateCartItemMutation();
   const [removeFromCart] = useRemoveFromCartMutation();
   const [massAddToCart] = useMassAddToCartMutation();
-  const [checkout, { isLoading: ischeckoutLoading, isError, isSuccess }] =
-    useCheckoutMutation();
+  const [checkout, { isLoading: ischeckoutLoading }] = useCheckoutMutation();
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate("/login");
+      navigate("/login", { state: "/cart" });
     }
-  }, []);
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     dispatch(mergeLocalCart(cartItems?.items || []));
@@ -73,7 +84,14 @@ const CartPage: React.FC = () => {
 
   const handleRemoveItem = (productId: string) => {
     dispatch(removeItemFromCart(productId));
-    removeFromCart({ productId }).then(() => refetch());
+    removeFromCart({ productId })
+      .then(() => {
+        refetch();
+        showSnackbar("Item removed successfully!", "success");
+      })
+      .catch(() => {
+        showSnackbar("Failed to remove item.", "error");
+      });
   };
 
   const handleUpdateQuantity = (
@@ -84,25 +102,49 @@ const CartPage: React.FC = () => {
     dispatch(updateItemQuantity({ productId, quantity }));
     updateCartItem({ productId, quantity })
       .unwrap()
-      .then(() => refetch())
-      .catch((err) => {
-        console.log("here");
+      .then(() => {
+        refetch();
+        showSnackbar("Quantity updated successfully!", "success");
+      })
+      .catch((e) => {
         dispatch(
           updateItemQuantity({
             productId,
             quantity: originalQuantity,
           })
         );
+        showSnackbar(e.data.message, "error");
       });
   };
 
   const handleCheckout = async () => {
+    const totalAmount = items.reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    );
+    const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
+
     try {
       await checkout().unwrap();
+      dispatch(setChceckedOut(items))
+      localStorage.setItem("totalAmount", JSON.stringify(totalAmount));
+      localStorage.setItem("totalItems", JSON.stringify(totalItems));
+      setShowOrder(true);
       dispatch(clearCart());
+      showSnackbar("Order placed successfully!", "success");
     } catch (error) {
-      console.error("Checkout failed:", error);
+      showSnackbar("Checkout failed. Please try again.", "error");
     }
+  };
+
+  const showSnackbar = (message: string, type: "success" | "error") => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   if (isLoading) {
@@ -111,38 +153,116 @@ const CartPage: React.FC = () => {
 
   return (
     <Box
-      sx={{ maxWidth: "90%", margin: "auto", padding: 2, marginTop: "10px" }}
+      sx={{
+        display: { xs: "block", md: "flex" },
+        padding: 2,
+        marginTop: "10px",
+      }}
     >
-      <Grid container spacing={2} maxHeight="75vh" overflow="scroll">
-        {items?.map((item) => (
-          <Grid item xs={12} key={item.product?._id}>
-            <CartProduct
-              item={item}
-              onRemove={() => handleRemoveItem(item.product._id)}
-              handleUpdateQuantity={(
-                quantity: number,
-                originalQuantity: number
-              ) =>
-                handleUpdateQuantity(
-                  item.product._id,
-                  quantity,
-                  originalQuantity
-                )
-              }
-            />
-          </Grid>
-        ))}
-      </Grid>
-      <div style={{ display: "flex" }}>
-        <AddToCartButton
-          variant="contained"
-          color="primary"
-          style={{ width: "30%", marginLeft: "auto", marginTop: "20px" }}
-          onClick={handleCheckout}
+      {items?.length ? (
+        <>
+          <Box
+            sx={{
+              flex: 3,
+              maxHeight: "75vh",
+              overflowY: "auto",
+              pr: 2,
+              "&::-webkit-scrollbar": { width: "10px" },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#888",
+                borderRadius: "10px",
+              },
+            }}
+          >
+            <Grid container spacing={2}>
+              {items?.map((item) => (
+                <Grid item xs={12} key={item.product?._id}>
+                  <CartProduct
+                    item={item}
+                    onRemove={() => handleRemoveItem(item.product._id)}
+                    handleUpdateQuantity={(
+                      quantity: number,
+                      originalQuantity: number
+                    ) =>
+                      handleUpdateQuantity(
+                        item.product._id,
+                        quantity,
+                        originalQuantity
+                      )
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+
+          <Box
+            sx={{
+              flex: 1,
+              ml: 2,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-start",
+            }}
+          >
+            <Card sx={{ width: "100%" }}>
+              <CardContent>
+                <Typography variant="h6">Order Summary</Typography>
+                <Divider sx={{ marginY: 2 }} />
+                <Typography variant="body1">
+                  Total Items:{" "}
+                  {items.reduce((acc, item) => acc + item.quantity, 0)}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Total Amount: $
+                  {items
+                    .reduce(
+                      (acc, item) => acc + item.product.price * item.quantity,
+                      0
+                    )
+                    .toFixed(2)}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={handleCheckout}
+                  disabled={ischeckoutLoading}
+                >
+                  {ischeckoutLoading ? "Processing..." : "Place Order"}
+                </Button>
+              </CardContent>
+            </Card>
+          </Box>
+        </>
+      ) : (
+        <NoItemsInCart />
+      )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarType}
+          sx={{ width: "100%" }}
         >
-          Place Order
-        </AddToCartButton>
-      </div>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
+      {showOrder ? (
+        <OrderSuccessNotification
+          totalAmount={Number(localStorage.getItem("totalAmount") || 0).toFixed(
+            2
+          )}
+          totalItems={Number(localStorage.getItem("totalItems"))}
+        />
+      ) : null}
     </Box>
   );
 };
