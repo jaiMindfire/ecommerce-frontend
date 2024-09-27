@@ -29,6 +29,8 @@ import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
+import LoginSignupModal from "./LoginSignupModal";
+import { usePopup } from "../context/LoginPopupContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -78,6 +80,9 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { isModalOpen, openModal, closeModal } = usePopup();
+
+
   const handleSearch = (e: any) => {
     dispatch(setSearchTerm(e.target.value));
   };
@@ -99,12 +104,18 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     handleClose();
-    navigate("/login");
+    navigate('/')
+    openModal();
   };
 
-  const handleLogin = () => {
-    navigate("/login");
-  };
+  const handleCartClick = ()=>{
+    if(isLoggedIn){
+      navigate("/cart")
+    }
+    else{
+      openModal();
+    }
+  }
 
   return (
     <>
@@ -156,7 +167,7 @@ const Navbar: React.FC = () => {
 
           <IconButton color="inherit">
             <Badge badgeContent={cartItems.length} color="error">
-              <ShoppingCartIcon onClick={() => navigate("/cart")} />
+              <ShoppingCartIcon onClick={handleCartClick} />
             </Badge>
           </IconButton>
 
@@ -187,7 +198,7 @@ const Navbar: React.FC = () => {
               </Menu>
             </>
           ) : (
-            <IconButton color="inherit" onClick={handleLogin}>
+            <IconButton color="inherit" onClick={openModal}>
               <AccountCircleIcon />
               <Typography variant="body1" sx={{ ml: 1 }}>
                 Login
@@ -206,6 +217,7 @@ const Navbar: React.FC = () => {
           E-Commerce
         </Typography>
       </Drawer>
+      <LoginSignupModal open={isModalOpen} handleClose={closeModal} />
     </>
   );
 };

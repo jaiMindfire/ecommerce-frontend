@@ -9,18 +9,32 @@ const useAddToCart = () => {
   const [addToCartMutation, { isLoading }] = useAddToCartMutation();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
-  
+
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const handleAddToCart = (product: any, navigate: any) => {
-    const isInCart = cartItems.find((item) => item.product?._id === product._id);
+  const handleAddToCart = (
+    product: any,
+    navigate: any,
+    isLoggedIn: boolean,
+    openPopup: any
+  ) => {
+    const isInCart = cartItems.find(
+      (item) => item.product?._id === product._id
+    );
 
     dispatch(addItemToCart({ product, quantity: 1 }));
 
     if (isInCart) {
-      navigate("/cart");
+      if (isLoggedIn) {
+        navigate("/cart");
+      } else {
+        openPopup();
+        localStorage.setItem("to", "/cart");
+      }
     } else {
       addToCartMutation({
         productId: product._id,
@@ -48,7 +62,10 @@ const useAddToCart = () => {
     }
   };
 
-  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === "clickaway") {
       return;
     }

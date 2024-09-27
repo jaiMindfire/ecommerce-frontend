@@ -73,9 +73,6 @@ const SignupPage: React.FC = () => {
         setSnackbarMessage("Signup successful");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
       } catch (error: any) {
         setSnackbarMessage(error?.data?.message);
         setSnackbarSeverity("error");
@@ -101,11 +98,9 @@ const SignupPage: React.FC = () => {
       <BackgroundImage />
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          minHeight: "75vh",
         }}
       >
         <StyledPaper elevation={6}>

@@ -25,6 +25,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../features/auth/authApi";
 import { setCredentials } from "../features/auth/authSlice";
 import { RootState } from "../redux/store";
+import { usePopup } from "../context/LoginPopupContext";
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -72,9 +73,8 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
-  const location = useLocation();
-  const destination = location.state;
-  console.log(location.state,'state')
+
+  const { closeModal } = usePopup();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -106,12 +106,14 @@ const LoginPage: React.FC = () => {
         setSnackbarMessage("Login successful");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
-        console.log(destination)
+        const destination = localStorage.getItem('to');
         if (destination) {
+          localStorage.setItem('to', "")
           navigate(destination);
         } else {
           navigate("/");
         }
+        closeModal();
       } catch (error: any) {
         setSnackbarMessage(error?.data?.message);
         setSnackbarSeverity("error");
@@ -133,11 +135,9 @@ const LoginPage: React.FC = () => {
       <BackgroundImage />
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          minHeight: "75vh",
         }}
       >
         <StyledPaper elevation={6}>

@@ -33,6 +33,7 @@ import { CartItem } from "../types/cartTypes";
 import OrderSuccessNotification from "./OrderSuccessPage";
 import NoItemsInCart from "../components/NoCartItems";
 import { setChceckedOut } from "../features/products/productsSlice";
+import { usePopup } from "../context/LoginPopupContext";
 
 const CartPage: React.FC = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.token);
@@ -59,9 +60,12 @@ const CartPage: React.FC = () => {
   const [massAddToCart] = useMassAddToCartMutation();
   const [checkout, { isLoading: ischeckoutLoading }] = useCheckoutMutation();
 
+  const { openModal, closeModal } = usePopup();
+
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate("/login", { state: "/cart" });
+      localStorage.setItem("to", "/cart")
+
     }
   }, [isLoggedIn, navigate]);
 
