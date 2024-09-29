@@ -1,5 +1,6 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { Dialog, DialogContent, Tabs, Tab, Box } from '@mui/material';
+import SkeletonLoader from './LoginSkeleton';
 
 
 const LoginPage = lazy(() => import('../pages/LoginPage'));
@@ -41,7 +42,7 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({ open, handleClose }
           <Tab label="Signup" />
         </Tabs>
 
-        <Suspense fallback={<Box>Loading...</Box>}>
+        <Suspense fallback={<SkeletonLoader/>}>
           {tabValue === 0 && <LoginPage />}
           {tabValue === 1 && <SignupPage />}
         </Suspense>

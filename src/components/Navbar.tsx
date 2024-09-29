@@ -85,6 +85,7 @@ const Navbar: React.FC = () => {
 
   const handleSearch = (e: any) => {
     dispatch(setSearchTerm(e.target.value));
+    navigate("/")
   };
 
   const handleChange = (e: any) => {

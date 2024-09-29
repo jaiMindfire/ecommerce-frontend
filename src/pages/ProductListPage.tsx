@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useGetProductsQuery } from "../features/products/productsApi";
@@ -13,32 +9,45 @@ import NoDataFound from "../components/NoDataFound";
 
 const ProductListPage: React.FC = () => {
   const [page, setPage] = useState(1);
-  const [productsList, setProductsList] = useState<any[]>([]); 
+  const [productsList, setProductsList] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const search = useSelector((state: RootState) => state.products.searchTerm);
   const limit = 10;
 
-  const { data: products, error, isLoading, isFetching } = useGetProductsQuery({
+  const {
+    data: products,
+    error,
+    isLoading,
+    isFetching,
+  } = useGetProductsQuery({
     search,
     page,
     limit,
   });
 
+  useEffect(() => {
+    setPage(1);
+    setProductsList([]);
+    setHasMore(true);
+  }, [search]);
+
   // Append new products when data is fetched
   useEffect(() => {
     if (products?.data) {
-      setProductsList((prevProducts) => [...prevProducts, ...products.data]);
+      setProductsList((prevProducts) => {
+        return page === 1 ? products.data : [...prevProducts, ...products.data];
+      });
       if (products.data.length < limit) {
         setHasMore(false);
       }
     }
-  }, [products]);
+  }, [products, page, limit]);
 
   // Infinite scroll event
   const handleScroll = () => {
     if (
       window.innerHeight + document.documentElement.scrollTop >=
-      document.documentElement.scrollHeight - 100 &&
+        document.documentElement.scrollHeight - 100 &&
       !isFetching &&
       hasMore
     ) {
@@ -62,7 +71,7 @@ const ProductListPage: React.FC = () => {
           </Grid>
         ))}
       </Grid>
-      
+
       {isFetching && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <LoadingGrid />

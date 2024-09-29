@@ -16,12 +16,13 @@ import {
   useTheme,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../features/auth/authApi";
 import { setCredentials } from "../features/auth/authSlice";
 import { RootState } from "../redux/store";
@@ -82,6 +83,8 @@ const LoginPage: React.FC = () => {
     "success"
   );
 
+  const [loading, setLoading] = useState(false); // State to manage loading
+
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
     password: Yup.string().required("Required"),
@@ -91,7 +94,7 @@ const LoginPage: React.FC = () => {
     if (isLoggedIn) {
       navigate("/");
     }
-  }, []);
+  }, [isLoggedIn, navigate]);
 
   const formik = useFormik({
     initialValues: {
@@ -100,15 +103,16 @@ const LoginPage: React.FC = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         const userData = await login(values).unwrap();
         dispatch(setCredentials(userData));
         setSnackbarMessage("Login successful");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
-        const destination = localStorage.getItem('to');
+        const destination = localStorage.getItem("to");
         if (destination) {
-          localStorage.setItem('to', "")
+          localStorage.setItem("to", "");
           navigate(destination);
         } else {
           navigate("/");
@@ -118,6 +122,8 @@ const LoginPage: React.FC = () => {
         setSnackbarMessage(error?.data?.message);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -208,18 +214,23 @@ const LoginPage: React.FC = () => {
               fullWidth
               variant="contained"
               color="primary"
+              disabled={loading} // Disable button while loading
             >
-              Login
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Login"
+              )}
             </StyledButton>
           </form>
-          <Box mt={2}>
+          {/* <Box mt={2}>
             <Typography variant="body2">
               Don't have an account yet?{" "}
               <Link to="/signup" color="primary">
                 Signup
               </Link>
             </Typography>
-          </Box>
+          </Box> */}
         </StyledPaper>
       </Box>
 

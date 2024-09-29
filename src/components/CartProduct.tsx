@@ -11,12 +11,14 @@ import {
   Button,
   styled,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 
 interface CartItemProps {
   item: CartItem;
   handleUpdateQuantity: (quantity: number, originalQuantity: number) => void;
   onRemove: (productId: string) => void;
+  isLoading: boolean
 }
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -71,6 +73,7 @@ const CartProduct: React.FC<CartItemProps> = ({
   item,
   handleUpdateQuantity,
   onRemove,
+  isLoading
 }) => {
   const theme = useTheme();
 
@@ -140,8 +143,9 @@ const CartProduct: React.FC<CartItemProps> = ({
           onClick={() => onRemove(item.product?._id)}
           sx={{ marginTop: 2 }}
           aria-label={`Remove ${item.product?.name} from cart`}
+          disabled={isLoading}
         >
-          Remove
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Remove"}
         </Button>
       </StyledCardContent>
     </StyledCard>
