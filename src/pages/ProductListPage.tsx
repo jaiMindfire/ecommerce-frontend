@@ -12,7 +12,7 @@ const ProductListPage: React.FC = () => {
   const [productsList, setProductsList] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const search = useSelector((state: RootState) => state.products.searchTerm);
-  const limit = 10;
+  const limit = 8;
 
   const {
     data: products,
