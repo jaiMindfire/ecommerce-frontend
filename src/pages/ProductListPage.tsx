@@ -25,20 +25,30 @@ const ProductListPage: React.FC = () => {
     limit,
   });
 
+
   useEffect(() => {
     setPage(1);
     setProductsList([]);
     setHasMore(true);
   }, [search]);
 
-  // Append new products when data is fetched
+
   useEffect(() => {
     if (products?.data) {
       setProductsList((prevProducts) => {
-        return page === 1 ? products.data : [...prevProducts, ...products.data];
+        if (page === 1) {
+          return products.data;
+        } else {
+
+          const newProducts = products.data.filter(
+            (newProduct) =>
+              !prevProducts.some((prevProduct) => prevProduct._id === newProduct._id)
+          );
+          return [...prevProducts, ...newProducts];
+        }
       });
       if (products.data.length < limit) {
-        setHasMore(false);
+        setHasMore(false); // No more data to fetch
       }
     }
   }, [products, page, limit]);
@@ -47,7 +57,7 @@ const ProductListPage: React.FC = () => {
   const handleScroll = () => {
     if (
       window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.scrollHeight - 100 &&
+        document.documentElement.scrollHeight  &&
       !isFetching &&
       hasMore
     ) {
