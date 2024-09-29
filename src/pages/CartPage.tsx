@@ -47,6 +47,7 @@ const CartPage: React.FC = () => {
     "success"
   );
   const [showOrder, setShowOrder] = useState(false);
+  const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
 
   const {
     data: cartItems,
@@ -64,8 +65,7 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      localStorage.setItem("to", "/cart")
-
+      localStorage.setItem("to", "/cart");
     }
   }, [isLoggedIn, navigate]);
 
@@ -87,14 +87,19 @@ const CartPage: React.FC = () => {
   }, [cartItems, isLoggedIn, dispatch]);
 
   const handleRemoveItem = (productId: string) => {
-    dispatch(removeItemFromCart(productId));
+    setLoadingItemId(productId);
+    
     removeFromCart({ productId })
       .then(() => {
+        dispatch(removeItemFromCart(productId));
         refetch();
         showSnackbar("Item removed successfully!", "success");
       })
       .catch(() => {
         showSnackbar("Failed to remove item.", "error");
+      })
+      .finally(() => {
+        setLoadingItemId(null);
       });
   };
 
@@ -131,7 +136,7 @@ const CartPage: React.FC = () => {
     try {
       await checkout().unwrap();
       refetch();
-      dispatch(setChceckedOut(items))
+      dispatch(setChceckedOut(items));
       localStorage.setItem("totalAmount", JSON.stringify(totalAmount));
       localStorage.setItem("totalItems", JSON.stringify(totalItems));
       setShowOrder(true);
@@ -195,6 +200,7 @@ const CartPage: React.FC = () => {
                         originalQuantity
                       )
                     }
+                    isLoading={loadingItemId === item.product._id}
                   />
                 </Grid>
               ))}

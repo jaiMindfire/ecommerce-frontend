@@ -16,6 +16,7 @@ import {
   useTheme,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -26,7 +27,7 @@ import { BackgroundImage, StyledButton, StyledPaper } from "./LoginPage";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
-const SignupPage: React.FC = () => {
+const SignupPage: React.FC = ({}) => {
   const navigate = useNavigate();
   const [signup] = useSignupMutation();
   const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +47,7 @@ const SignupPage: React.FC = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
     "success"
   );
+  const [loading, setLoading] = useState(false); // State for loading
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -65,6 +67,7 @@ const SignupPage: React.FC = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         await signup({
           email: values.email,
@@ -73,10 +76,14 @@ const SignupPage: React.FC = () => {
         setSnackbarMessage("Signup successful");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
+        formik.resetForm();
+        navigate("/");
       } catch (error: any) {
         setSnackbarMessage(error?.data?.message);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -211,18 +218,20 @@ const SignupPage: React.FC = () => {
               fullWidth
               variant="contained"
               color="primary"
+              disabled={loading} // Disable button when loading
             >
-              Signup
+              {loading ? <CircularProgress size={24} /> : "Signup"}{" "}
+              {/* Show loading spinner */}
             </StyledButton>
           </form>
-          <Box mt={2}>
+          {/* <Box mt={2}>
             <Typography variant="body2">
               Already have an account?{" "}
               <Link to="/login" color="primary">
                 Login
               </Link>
             </Typography>
-          </Box>
+          </Box> */}
         </StyledPaper>
       </Box>
 
