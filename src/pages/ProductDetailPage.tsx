@@ -136,7 +136,7 @@ const ProductDetailPage: React.FC = () => {
               }
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(product, navigate, isLoggedIn, usePopup);
+                handleAddToCart(product, navigate, isLoggedIn, openModal);
               }}
               disabled={product?.stock === 0 || isLoading}
             >
