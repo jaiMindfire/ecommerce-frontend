@@ -19,7 +19,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByIdQuery } from "../features/products/productsApi";
 import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
 import { useAddToCartMutation } from "../features/cart/cartApi";
-import { setChceckedOut } from "../features/products/productsSlice";
+import { setCheckedOut } from "../features/products/productsSlice";
 import useAddToCart from "../hooks/useAddToCart";
 import { usePopup } from "../context/LoginPopupContext";
 
@@ -76,7 +76,7 @@ const ProductDetailPage: React.FC = () => {
       const newItems = checkedOutItems.filter(
         (item) => item.product?._id !== product?._id
       );
-      dispatch(setChceckedOut(newItems));
+      dispatch(setCheckedOut(newItems));
     }
   }, []);
 

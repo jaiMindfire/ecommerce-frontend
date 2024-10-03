@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "../../types/prodctsType";
 import { CartItem } from "../../types/cartTypes";
-// import { productsApi } from "./productsApi";
 
 interface ProductsState {
   products: Product[];
   searchTerm: string;
   selectedProduct: Product;
   checkedOutItems: CartItem[];
+  priceRange: number[];
+  selectedCategory: string[];
+  selectedRating: number;
 }
 
 const initialState: ProductsState = {
@@ -20,8 +22,12 @@ const initialState: ProductsState = {
     imageUrl: "",
     name: "",
     price: 0,
+    rating: 0,
   },
   checkedOutItems: [],
+  priceRange: [0, 1000],
+  selectedCategory: [],
+  selectedRating: 0,
 };
 
 const productsSlice = createSlice({
@@ -34,12 +40,28 @@ const productsSlice = createSlice({
     setSelectedProduct(state, action: PayloadAction<Product>) {
       state.selectedProduct = action.payload;
     },
-    setChceckedOut(state, action: PayloadAction<CartItem[]>) {
+    setCheckedOut(state, action: PayloadAction<CartItem[]>) {
       state.checkedOutItems = action.payload;
+    },
+    setPriceRange(state, action: PayloadAction<number[]>) {
+      state.priceRange = action.payload;
+    },
+    setSelectedCategory(state, action: PayloadAction<string[]>) {
+      state.selectedCategory = action.payload;
+    },
+    setSelectedRating(state, action: PayloadAction<number>) {
+      state.selectedRating = action.payload;
     },
   },
 });
 
-export const { setSearchTerm, setSelectedProduct, setChceckedOut } =
-  productsSlice.actions;
+export const {
+  setSearchTerm,
+  setSelectedProduct,
+  setCheckedOut,
+  setPriceRange,
+  setSelectedCategory,
+  setSelectedRating,
+} = productsSlice.actions;
+
 export default productsSlice.reducer;

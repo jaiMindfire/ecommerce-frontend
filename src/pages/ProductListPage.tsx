@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -14,6 +14,10 @@ const ProductListPage: React.FC = () => {
   const search = useSelector((state: RootState) => state.products.searchTerm);
   const limit = 8;
 
+  const { priceRange, selectedCategory, selectedRating } = useSelector(
+    (state: RootState) => state.products
+  );
+
   const {
     data: products,
     error,
@@ -23,15 +27,17 @@ const ProductListPage: React.FC = () => {
     search,
     page,
     limit,
+    priceRange,
+    categories: selectedCategory,
+    rating: selectedRating,
   });
 
-
+  const listRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setPage(1);
     setProductsList([]);
     setHasMore(true);
-  }, [search]);
-
+  }, [search, priceRange, selectedCategory, selectedRating]);
 
   useEffect(() => {
     if (products?.data) {
@@ -39,42 +45,63 @@ const ProductListPage: React.FC = () => {
         if (page === 1) {
           return products.data;
         } else {
-
           const newProducts = products.data.filter(
             (newProduct) =>
-              !prevProducts.some((prevProduct) => prevProduct._id === newProduct._id)
+              !prevProducts.some(
+                (prevProduct) => prevProduct._id === newProduct._id
+              )
           );
           return [...prevProducts, ...newProducts];
         }
       });
       if (products.data.length < limit) {
-        setHasMore(false); // No more data to fetch
+        setHasMore(false);
       }
     }
   }, [products, page, limit]);
 
-  // Infinite scroll event
   const handleScroll = () => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.scrollHeight  &&
-      !isFetching &&
-      hasMore
-    ) {
-      setPage((prevPage) => prevPage + 1);
+    const container = listRef.current;
+    if (container) {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      if (
+        scrollTop + clientHeight >= scrollHeight - 5 &&
+        !isFetching &&
+        hasMore
+      ) {
+        setPage((prevPage) => prevPage + 1);
+      }
     }
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    const container = listRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+    }
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
     };
   }, [isFetching, hasMore]);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box
+      ref={listRef}
+      sx={{
+        p: 3,
+        width: "100%",
+        overflowY: "auto",
+        maxHeight: "90vh",
+        "&::-webkit-scrollbar": { width: "10px" },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#888",
+          borderRadius: "10px",
+        },
+      }}
+    >
+      <Grid container spacing={3} width="100%">
         {productsList?.map((product) => (
           <Grid item xs={12} sm={6} md={5} lg={3} key={product._id}>
             <ProductCard product={product} />
