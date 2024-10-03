@@ -1,8 +1,6 @@
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartItem } from "../../types/cartTypes";
 import { RootState } from "../../redux/store";
-
 
 interface CartState {
   items: CartItem[];
@@ -54,7 +52,7 @@ const cartSlice = createSlice({
       state.newItems = [...state.items];
       action.payload.forEach((serverItem) => {
         const existingItem = state.items.find(
-          (item) => item.product._id === serverItem.product._id
+          (item) => item?.product?._id === serverItem?.product?._id
         );
         console.log(state.newItems, "neew");
         if (!existingItem) {
@@ -64,7 +62,7 @@ const cartSlice = createSlice({
           });
         } else {
           state.newItems = state.newItems.filter(
-            (item) => item.product._id !== serverItem.product._id
+            (item) => item.product?._id !== serverItem.product?._id
           );
         }
       });

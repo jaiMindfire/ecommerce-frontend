@@ -47,7 +47,7 @@ const SignupPage: React.FC = ({}) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
     "success"
   );
-  const [loading, setLoading] = useState(false); // State for loading
+  const [loading, setLoading] = useState(false); 
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -218,7 +218,7 @@ const SignupPage: React.FC = ({}) => {
               fullWidth
               variant="contained"
               color="primary"
-              disabled={loading} // Disable button when loading
+              disabled={loading} 
             >
               {loading ? <CircularProgress size={24} /> : "Signup"}{" "}
               {/* Show loading spinner */}

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import React, { lazy } from "react";
 import App from "../App";
 import NavbarLayout from "../layouts/NavbarLayout";
+import NavbarWithFilterLayout from "../layouts/NavbarWithFilterLayout";
 
 // const LoginPage = lazy(() => import("../pages/LoginPage"));
 // const SignupPage = lazy(() => import("../pages/SignupPage"));
@@ -15,13 +16,8 @@ export const routes = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
         element: <NavbarLayout />,
         children: [
-          {
-            path: "/",
-            element: <ProductsPage />,
-          },
           {
             path: "products/:id",
             element: <ProductDetail />,
@@ -41,6 +37,15 @@ export const routes = createBrowserRouter([
           {
             path: "*",
             element: <PageNotFound />,
+          },
+        ],
+      },
+      {
+        element: <NavbarWithFilterLayout />,
+        children: [
+          {
+            path: "/",
+            element: <ProductsPage />,
           },
         ],
       },

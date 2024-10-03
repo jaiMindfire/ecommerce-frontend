@@ -12,6 +12,7 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Rating,
 } from "@mui/material";
 import { Product } from "../types/prodctsType";
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
@@ -27,7 +28,7 @@ interface ProductCardProps {
   product: Product;
 }
 
-const StyledCard = styled(Card)(({ theme }) => ({
+export const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   height: "100%",
@@ -119,6 +120,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 : product.name}
             </Typography>
           </Tooltip>
+
+          <Box display="flex" alignItems="center" mb={1}>
+            <Rating
+              value={product.rating}
+              precision={0.5} // Allows half-star ratings
+              readOnly
+              size="small"
+            />
+            <Typography variant="body2" ml={1}>
+              ({product.rating})
+            </Typography>
+          </Box>
+
           <Typography variant="h6" color="primary" gutterBottom>
             ${product.price.toFixed(2)}
           </Typography>

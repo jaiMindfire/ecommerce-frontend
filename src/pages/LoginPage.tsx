@@ -112,8 +112,8 @@ const LoginPage: React.FC = () => {
         setSnackbarOpen(true);
         const destination = localStorage.getItem("to");
         if (destination) {
-          localStorage.setItem("to", "");
           navigate(destination);
+          localStorage.setItem("to", "");
         } else {
           navigate("/");
         }

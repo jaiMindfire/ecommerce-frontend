@@ -80,8 +80,8 @@ const CartProduct: React.FC<CartItemProps> = ({
   return (
     <StyledCard>
       <StyledCardMedia
-        image={item.product.imageUrl}
-        aria-label={`Image of ${item.product.name}`}
+        image={item.product?.imageUrl}
+        aria-label={`Image of ${item.product?.name}`}
       />
       <StyledCardContent>
         <Box>

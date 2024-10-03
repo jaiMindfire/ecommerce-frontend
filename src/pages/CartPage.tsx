@@ -32,7 +32,7 @@ import { useNavigate } from "react-router-dom";
 import { CartItem } from "../types/cartTypes";
 import OrderSuccessNotification from "./OrderSuccessPage";
 import NoItemsInCart from "../components/NoCartItems";
-import { setChceckedOut } from "../features/products/productsSlice";
+import { setCheckedOut } from "../features/products/productsSlice";
 import { usePopup } from "../context/LoginPopupContext";
 
 const CartPage: React.FC = () => {
@@ -75,7 +75,7 @@ const CartPage: React.FC = () => {
     const localItems = JSON.parse(localStorage.getItem("cart") || "[]");
     localItems?.forEach((item: any) => {
       const existingItem = cartItems?.items?.find(
-        (cartItem) => cartItem.product._id === item?.product?._id
+        (cartItem) => cartItem.product?._id === item?.product?._id
       );
       if (!existingItem) {
         newItems.push(item);
@@ -88,7 +88,7 @@ const CartPage: React.FC = () => {
 
   const handleRemoveItem = (productId: string) => {
     setLoadingItemId(productId);
-    
+
     removeFromCart({ productId })
       .then(() => {
         dispatch(removeItemFromCart(productId));
@@ -136,7 +136,7 @@ const CartPage: React.FC = () => {
     try {
       await checkout().unwrap();
       refetch();
-      dispatch(setChceckedOut(items));
+      dispatch(setCheckedOut(items));
       localStorage.setItem("totalAmount", JSON.stringify(totalAmount));
       localStorage.setItem("totalItems", JSON.stringify(totalItems));
       setShowOrder(true);
@@ -189,18 +189,18 @@ const CartPage: React.FC = () => {
                 <Grid item xs={12} key={item.product?._id}>
                   <CartProduct
                     item={item}
-                    onRemove={() => handleRemoveItem(item.product._id)}
+                    onRemove={() => handleRemoveItem(item.product?._id)}
                     handleUpdateQuantity={(
                       quantity: number,
                       originalQuantity: number
                     ) =>
                       handleUpdateQuantity(
-                        item.product._id,
+                        item.product?._id,
                         quantity,
                         originalQuantity
                       )
                     }
-                    isLoading={loadingItemId === item.product._id}
+                    isLoading={loadingItemId === item.product?._id}
                   />
                 </Grid>
               ))}
@@ -222,13 +222,13 @@ const CartPage: React.FC = () => {
                 <Divider sx={{ marginY: 2 }} />
                 <Typography variant="body1">
                   Total Items:{" "}
-                  {items.reduce((acc, item) => acc + item.quantity, 0)}
+                  {items.reduce((acc, item) => acc + item?.quantity, 0)}
                 </Typography>
                 <Typography variant="body1" sx={{ mt: 1 }}>
                   Total Amount: $
                   {items
                     .reduce(
-                      (acc, item) => acc + item.product.price * item.quantity,
+                      (acc, item) => acc + item.product?.price * item.quantity,
                       0
                     )
                     .toFixed(2)}
