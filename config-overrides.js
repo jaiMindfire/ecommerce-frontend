@@ -15,7 +15,8 @@ module.exports = function override(config) {
     '@routes': path.resolve(__dirname, 'src/routes'),
     '@services': path.resolve(__dirname, 'src/services'),
     '@store': path.resolve(__dirname, 'src/store'),
-    '@theme': path.resolve(__dirname, 'src/theme')
+    '@theme': path.resolve(__dirname, 'src/theme'),
+    '@utils': path.resolve(__dirname, 'src/utils')
   };
 
   return config;

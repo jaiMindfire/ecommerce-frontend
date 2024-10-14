@@ -1,8 +1,9 @@
-import React from "react";
+//3rd Party Imports
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import ShoppingFilterPage from "../components/FilterComponent";
 import { Box, Grid } from "@mui/material";
+//Static Imports
+import Navbar from "@components/Navbar";
+import ShoppingFilterPage from "@components/FilterComponent";
 
 function NavbarWithFilterLayout() {
   return (

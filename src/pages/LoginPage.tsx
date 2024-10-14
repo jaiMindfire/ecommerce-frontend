@@ -1,10 +1,9 @@
-//React Imports
+// React Imports
 import React, { useEffect, useState } from "react";
-//3rd Party Imports
+// 3rd Party Imports
 import { useFormik } from "formik";
 import {
   Box,
-  Button,
   Container,
   Grid,
   Paper,
@@ -14,7 +13,7 @@ import {
 import { styled } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-//Static Imports
+// Static Imports
 import { useLoginMutation } from "@services/authApi";
 import { setCredentials } from "@store/redux/authSlice";
 import { RootState } from "@store/index";
@@ -24,8 +23,10 @@ import FormInput from "@components/FormInput";
 import SnackbarMessage from "@components/SnackbarMessage";
 import { useSnackbar } from "@hooks/useSnackbar";
 import { getValidationSchema } from "@utils/validationSchema";
+import { LOGIN_MESSAGES, LOGIN_PAGE_IMAGE } from "@constants/index";
 
-// Styled components for consistent styling
+
+//Styled components
 export const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   display: "flex",
@@ -40,17 +41,6 @@ export const StyledPaper = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-export const StyledButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(2, 0),
-  padding: theme.spacing(1, 4),
-  borderRadius: theme.shape.borderRadius * 4,
-  transition: "all 0.3s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-2px)",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-  },
-}));
-
 export const BackgroundImage = styled(Box)(({ theme }) => ({
   position: "absolute",
   top: 0,
@@ -58,7 +48,7 @@ export const BackgroundImage = styled(Box)(({ theme }) => ({
   right: 0,
   bottom: 0,
   backgroundImage:
-    "url('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2029&q=80')",
+    `url(${LOGIN_PAGE_IMAGE})`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   opacity: theme.palette.mode === "dark" ? 0.2 : 0.1,
@@ -66,19 +56,21 @@ export const BackgroundImage = styled(Box)(({ theme }) => ({
 }));
 
 const LoginPage: React.FC = () => {
-  //states
+  // State to manage loading status and password visibility
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  //hooks
+  // Hooks for Redux state management and routing
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [login] = useLoginMutation();
   const theme = useTheme();
+
   // Check if user is already logged in
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   const { closeModal } = usePopup();
   const { open, message, severity, showSnackbar, handleClose } = useSnackbar();
+
   // Formik setup for form handling
   const formik = useFormik({
     initialValues: {
@@ -91,13 +83,13 @@ const LoginPage: React.FC = () => {
     },
   });
 
-  //Login form submit
+  // Login form submit
   const formSubmit = async (values: any) => {
     setLoading(true);
     try {
       const userData = await login(values).unwrap();
       dispatch(setCredentials(userData));
-      showSnackbar("Login successful", "success");
+      showSnackbar(LOGIN_MESSAGES.loginSuccess, "success");
       const destination = localStorage.getItem("to");
       if (destination) {
         navigate(destination);
@@ -107,7 +99,7 @@ const LoginPage: React.FC = () => {
       }
       closeModal();
     } catch (error: any) {
-      showSnackbar(error?.data?.message, "error");
+      showSnackbar(LOGIN_MESSAGES.loginError, "error");
     } finally {
       setLoading(false);
     }
@@ -140,13 +132,13 @@ const LoginPage: React.FC = () => {
               color: theme.palette.mode === "dark" ? "white" : "primary.main",
             }}
           >
-            Login
+            {LOGIN_MESSAGES.loginButton}
           </Typography>
           <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <FormInput
-                  label="Email Address"
+                  label={LOGIN_MESSAGES.emailLabel}
                   name="email"
                   value={formik.values.email}
                   handleChange={formik.handleChange}
@@ -157,7 +149,7 @@ const LoginPage: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormInput
-                  label="Password"
+                  label={LOGIN_MESSAGES.passwordLabel}
                   name="password"
                   isPassword
                   showPassword={showPassword}
@@ -172,12 +164,12 @@ const LoginPage: React.FC = () => {
                 />
               </Grid>
             </Grid>
-            <SubmitButton loading={loading} label="Login" />{" "}
+            <SubmitButton loading={loading} label={LOGIN_MESSAGES.loginButton} />{" "}
             {/* Submit button for the form */}
           </form>
         </StyledPaper>
       </Box>
-      {/* Snackbar for displaying messages */}
+      {/* Snackbar for displaying LOGIN_MESSAGES */}
       <SnackbarMessage
         open={open}
         message={message}

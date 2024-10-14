@@ -1,8 +1,9 @@
-import React from "react";
+//3rd Party Imports
 import { Box, Typography, Paper, IconButton } from "@mui/material";
 import { styled } from "@mui/system";
 import { Search } from "@mui/icons-material";
 
+//Styled Components
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(4),

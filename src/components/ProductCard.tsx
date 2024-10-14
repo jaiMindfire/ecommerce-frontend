@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+
+// MUI Imports
 import {
   Card,
   CardContent,
@@ -14,7 +16,6 @@ import {
   Alert,
   Rating,
 } from "@mui/material";
-import { Product } from "../models/prodctsType";
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedProduct } from "../store/redux/productsSlice";
@@ -22,12 +23,16 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "@store/index";
 import useAddToCart from "../hooks/useAddToCart";
 import { usePopup } from "../store/context/LoginPopupContext";
+import { Product } from "@models/prodctsType";
+import { PRODUCT_MESSAGES } from "@constants/index";
 
+// TypeScript interface for ProductCard props
 interface ProductCardProps {
   product: Product;
 }
 
-export const StyledCard = styled(Card)(({ theme }) => ({
+// Styled Components
+const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   height: "100%",
@@ -48,7 +53,7 @@ const StyledCardMedia = styled(CardMedia)({
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
 });
 
-export const AddToCartButton = styled(Button)(({ theme }) => ({
+const AddToCartButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
   "&:hover": {
     backgroundColor: theme.palette.primary.dark,
@@ -66,21 +71,14 @@ const OutOfStockText = styled(Typography)(({ theme }) => ({
 }));
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
+  //redux-state
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.find((item) => item.product?._id === product._id);
-
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
-
+  //hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { openModal } = usePopup();
-
-  const handleProductSelect = () => {
-    dispatch(setSelectedProduct(product));
-    navigate(`/products/${product._id}`);
-  };
-
   const {
     handleAddToCart,
     snackbarMessage,
@@ -90,13 +88,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     isLoading,
   } = useAddToCart();
 
+  //Handle product selection and navigation
+  const handleProductSelect = () => {
+    dispatch(setSelectedProduct(product));
+    navigate(`/products/${product._id}`);
+  };
+
   return (
     <>
       <StyledCard onClick={handleProductSelect}>
         <Box position="relative">
           <StyledCardMedia image={product.imageUrl} title={product.name} />
           <Chip
-            label={(product?.stock || 0) > 0 ? "In Stock" : "Out of Stock"}
+            label={
+              (product?.stock || 0) > 0
+                ? PRODUCT_MESSAGES.stock.inStock
+                : PRODUCT_MESSAGES.stock.outOfStock
+            }
             color={(product?.stock || 0) > 0 ? "success" : "error"}
             sx={{
               position: "absolute",
@@ -153,7 +161,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 handleAddToCart(product, navigate, isLoggedIn, openModal);
               }}
             >
-              {isInCart ? "Go To Cart" : "Add To Cart"}
+              {isInCart
+                ? PRODUCT_MESSAGES.button.goToCart
+                : PRODUCT_MESSAGES.button.addToCart}
+              {/* If products not in cart then add to cart else go to cart */}
             </AddToCartButton>
           ) : (
             <OutOfStockText>Out of Stock</OutOfStockText>

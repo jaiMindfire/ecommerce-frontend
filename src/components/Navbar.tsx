@@ -1,4 +1,6 @@
+//React Imports
 import React, { useState } from "react";
+//3rd Party Imports
 import {
   AppBar,
   Toolbar,
@@ -8,30 +10,30 @@ import {
   Badge,
   Drawer,
   InputBase,
-  Box,
   Avatar,
   Menu,
   MenuItem,
 } from "@mui/material";
 import {
-  Search as SerachIcon,
+  Search as SearchIcon,
   ShoppingCart as ShoppingCartIcon,
   AccountCircle as AccountCircleIcon,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@store/index";
-import { logout } from "../store/redux/authSlice";
-import { setSearchTerm } from "../store/redux/productsSlice";
-import { styled, alpha } from "@mui/material/styles";
-import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
-import LoginSignupModal from "./LoginSignupModal";
-import { usePopup } from "../store/context/LoginPopupContext";
+import { styled, alpha } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+//Static Imports
+import { RootState } from "@store/index";
+import { logout } from "@store/redux/authSlice";
+import { setSearchTerm } from "@store/redux/productsSlice";
 import { toggleTheme } from "@store/redux/themeSlice";
+import { usePopup } from "@store/context/LoginPopupContext";
+import LoginSignupModal from "./LoginSignupModal";
+import { APP_ICON, AVATAR_URL } from "@constants/index";
 
+// Styled Components
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -72,48 +74,56 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Navbar: React.FC = () => {
+  //states
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
+  //Redux-states
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
 
+  //hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isModalOpen, openModal, closeModal } = usePopup();
 
+  //Function to toggle theme between light and dark mode
   const handleToggleTheme = () => {
     dispatch(toggleTheme());
   };
 
+  //Function to handle search input to search products
   const handleSearch = (e: any) => {
     dispatch(setSearchTerm(e.target.value));
     navigate("/");
   };
 
+  //Function to clear search term if input is empty
   const handleChange = (e: any) => {
     if (e.target.value === "") {
       dispatch(setSearchTerm(e.target.value));
     }
   };
 
+  // Function to open user menu
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
+  // Function to close user menu
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  // Function to handle user logout
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logout()); //logout action
     handleClose();
     navigate("/");
     openModal();
   };
 
+  // Function to handle cart click
   const handleCartClick = () => {
     if (isLoggedIn) {
       navigate("/cart");
@@ -126,14 +136,6 @@ const Navbar: React.FC = () => {
     <>
       <AppBar position="static" color={isDarkMode ? "default" : "primary"}>
         <Toolbar>
-          {/* <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => setDrawerOpen(true)}
-          >
-            <MenuIcon />
-          </IconButton> */}
-
           <Typography
             variant="h6"
             component="div"
@@ -144,12 +146,12 @@ const Navbar: React.FC = () => {
             }}
             onClick={() => navigate("/")}
           >
-            E-Commerce
+            {APP_ICON}
           </Typography>
 
           <Search>
             <SearchIconWrapper>
-              <SerachIcon />
+              <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
@@ -181,9 +183,8 @@ const Navbar: React.FC = () => {
               <IconButton edge="end" color="inherit" onClick={handleMenu}>
                 <Avatar
                   alt="User Avatar"
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"
+                  src={AVATAR_URL}
                 >
-                  JB
                 </Avatar>
               </IconButton>
               <Menu
@@ -219,9 +220,11 @@ const Navbar: React.FC = () => {
         onClose={() => setDrawerOpen(false)}
       >
         <Typography variant="h5" sx={{ p: 2 }}>
-          E-Commerce
+          {APP_ICON}
         </Typography>
       </Drawer>
+
+      {/* Login/Signup Modal */}
       <LoginSignupModal open={isModalOpen} handleClose={closeModal} />
     </>
   );

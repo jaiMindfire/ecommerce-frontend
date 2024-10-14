@@ -1,4 +1,6 @@
+//React Imports
 import React, { useState } from "react";
+// 3rd Party Imports
 import {
   Box,
   Typography,
@@ -7,7 +9,6 @@ import {
   FormControlLabel,
   Select,
   MenuItem,
-  Chip,
   Grid,
   IconButton,
   Drawer,
@@ -16,7 +17,6 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import StarIcon from "@mui/icons-material/Star";
@@ -29,6 +29,7 @@ import {
 import { RootState } from "@store/index";
 import { useGetCategoriesQuery } from "@services/productsApi";
 
+// Styled Components
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(3),
@@ -40,41 +41,35 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const ErrorText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.error.main,
-  marginTop: theme.spacing(1),
-}));
-
 const ShoppingFilterPage: React.FC = () => {
-  const theme = useTheme();
+  //states
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const isMobile = useMediaQuery("(max-width:1000px)");
-
   const [localPriceRange, setLocalPriceRange] = useState<number[]>([0, 1000]);
-
-  const { data: categories } = useGetCategoriesQuery();
-
+  //redux-states
   const selectedCategory = useSelector(
     (state: RootState) => state.products.selectedCategory
   );
-
   const selectedRating = useSelector(
     (state: RootState) => state.products.selectedRating
   );
-
+  //hooks
+  const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width:1000px)");
+  const { data: categories } = useGetCategoriesQuery();
   const dispatch = useDispatch();
+  //variables
+  let debounceTimer: any;
 
-  let val: any;
-
-  //debouncing
+  // Handle price change with debouncing
   const handlePriceChange = (event: Event, newValue: number | number[]) => {
     setLocalPriceRange(newValue as number[]);
-    clearTimeout(val);
-    val = setTimeout(() => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
       dispatch(setPriceRange(newValue as number[]));
     }, 500);
   };
 
+  // Handle brand checkbox changes
   const handleBrandChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const brand = event.target.name;
     dispatch(
@@ -86,10 +81,12 @@ const ShoppingFilterPage: React.FC = () => {
     );
   };
 
+  // Handle rating selection change
   const handleRatingChange = (event: SelectChangeEvent<number>) => {
     dispatch(setSelectedRating(Number(event.target.value)));
   };
 
+  // Toggle drawer for mobile view
   const toggleDrawer =
     (open: boolean) =>
     (event: React.KeyboardEvent<Element> | React.MouseEvent<Element>) => {
@@ -102,6 +99,7 @@ const ShoppingFilterPage: React.FC = () => {
       setDrawerOpen(open);
     };
 
+  // Filter content for the drawer
   const filterContent = (
     <Box
       sx={{
@@ -182,6 +180,7 @@ const ShoppingFilterPage: React.FC = () => {
       }}
     >
       <Grid container spacing={2}>
+        {/* Filter section for larger screens */}
         {!isMobile && (
           <Grid item xs={12} sm={3}>
             {filterContent}
@@ -197,6 +196,7 @@ const ShoppingFilterPage: React.FC = () => {
                 marginBottom: 2,
               }}
             >
+              {/* Filter button for mobile view */}
               {isMobile && (
                 <IconButton
                   onClick={toggleDrawer(true)}
@@ -209,6 +209,8 @@ const ShoppingFilterPage: React.FC = () => {
           </Box>
         </Grid>
       </Grid>
+
+      {/* Drawer component for mobile filter options */}
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
         <Box sx={{ display: "flex", justifyContent: "flex-end", padding: 1 }}>
           <IconButton onClick={toggleDrawer(false)} aria-label="Close filter">
