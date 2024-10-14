@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addItemToCart, removeItemFromCart } from "../store/redux/cartSlice";
 import { useAddToCartMutation } from "@services/cartApi";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 
 const useAddToCart = () => {
   const dispatch = useDispatch();

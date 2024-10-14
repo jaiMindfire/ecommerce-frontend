@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "@services/authApi";
 import { setCredentials } from "../store/redux/authSlice";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 import { usePopup } from "../store/context/LoginPopupContext";
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({

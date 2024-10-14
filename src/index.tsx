@@ -4,7 +4,7 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { routes } from "./routes";
 import { Suspense } from "react";
-import { store } from "./redux/store";
+import { store } from "@store/index";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(

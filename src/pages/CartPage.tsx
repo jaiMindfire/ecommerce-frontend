@@ -12,7 +12,7 @@ import {
   CardContent,
   Divider,
 } from "@mui/material";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 import {
   useGetCartQuery,
   useUpdateCartItemMutation,

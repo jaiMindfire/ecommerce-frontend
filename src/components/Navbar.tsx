@@ -20,10 +20,9 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 import { logout } from "../store/redux/authSlice";
 import { setSearchTerm } from "../store/redux/productsSlice";
-import { useTheme } from "../store/context/ThemeContext";
 import { styled, alpha } from "@mui/material/styles";
 import {
   LightMode as LightModeIcon,
@@ -31,6 +30,7 @@ import {
 } from "@mui/icons-material";
 import LoginSignupModal from "./LoginSignupModal";
 import { usePopup } from "../store/context/LoginPopupContext";
+import { toggleTheme } from "@store/redux/themeSlice";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -74,18 +74,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Navbar: React.FC = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { toggleTheme, isDarkMode } = useTheme();
+
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
+
   const { isModalOpen, openModal, closeModal } = usePopup();
 
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
+  };
 
   const handleSearch = (e: any) => {
     dispatch(setSearchTerm(e.target.value));
-    navigate("/")
+    navigate("/");
   };
 
   const handleChange = (e: any) => {
@@ -105,18 +110,17 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     handleClose();
-    navigate('/')
+    navigate("/");
     openModal();
   };
 
-  const handleCartClick = ()=>{
-    if(isLoggedIn){
-      navigate("/cart")
-    }
-    else{
+  const handleCartClick = () => {
+    if (isLoggedIn) {
+      navigate("/cart");
+    } else {
       openModal();
     }
-  }
+  };
 
   return (
     <>
@@ -161,7 +165,7 @@ const Navbar: React.FC = () => {
 
           <Switch
             checked={isDarkMode}
-            onChange={toggleTheme}
+            onChange={handleToggleTheme}
             icon={<LightModeIcon />}
             checkedIcon={<DarkModeIcon />}
           />

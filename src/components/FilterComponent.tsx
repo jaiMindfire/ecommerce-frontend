@@ -26,7 +26,7 @@ import {
   setSelectedCategory,
   setSelectedRating,
 } from "@store/redux/productsSlice";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 import { useGetCategoriesQuery } from "@services/productsApi";
 
 const StyledBox = styled(Box)(({ theme }) => ({

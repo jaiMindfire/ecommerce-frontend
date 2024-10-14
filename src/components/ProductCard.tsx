@@ -19,7 +19,7 @@ import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedProduct } from "../store/redux/productsSlice";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 import useAddToCart from "../hooks/useAddToCart";
 import { usePopup } from "../store/context/LoginPopupContext";
 

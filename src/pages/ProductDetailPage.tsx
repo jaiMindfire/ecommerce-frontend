@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByIdQuery } from "@services/productsApi";
 import { addItemToCart, removeItemFromCart } from "../store/redux/cartSlice";

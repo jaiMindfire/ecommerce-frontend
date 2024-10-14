@@ -12,7 +12,6 @@ module.exports = function override(config) {
     '@layouts': path.resolve(__dirname, 'src/layouts'),
     '@models': path.resolve(__dirname, 'src/models'),
     '@pages': path.resolve(__dirname, 'src/pages'),
-    '@redux': path.resolve(__dirname, 'src/redux'),
     '@routes': path.resolve(__dirname, 'src/routes'),
     '@services': path.resolve(__dirname, 'src/services'),
     '@store': path.resolve(__dirname, 'src/store'),

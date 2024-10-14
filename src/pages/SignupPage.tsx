@@ -25,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSignupMutation } from "@services/authApi";
 import { BackgroundImage, StyledButton, StyledPaper } from "./LoginPage";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "@store/index";
 
 const SignupPage: React.FC = ({}) => {
   const navigate = useNavigate();
