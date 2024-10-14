@@ -23,26 +23,22 @@ import SnackbarMessage from "@components/SnackbarMessage";
 import { setCheckedOut } from "@store/redux/productsSlice";
 import { handleMergeLocalCart } from "@utils/cartUtils";
 import OrderSuccessNotification from "./OrderSuccessPage";
+import { useSnackbar } from "@hooks/useSnackbar";
 
 const CartPage: React.FC = () => {
   //states
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
-    "success"
-  );
   const [showOrder, setShowOrder] = useState(false);
   //redux-states
   const isLoggedIn = useSelector((state: RootState) => state.auth.token);
   const items = useSelector(selectCartItems);
   //hooks
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { data: cartItems, isLoading } = useGetCartQuery(undefined, {
     skip: !isLoggedIn,
   });
   const [massAddToCart] = useMassAddToCartMutation();
   const [checkout, { isLoading: isCheckoutLoading }] = useCheckoutMutation();
+  const { open, message, severity, showSnackbar, handleClose } = useSnackbar();
 
   // Function to handle the checkout process
   const handleCheckout = async () => {
@@ -63,13 +59,6 @@ const CartPage: React.FC = () => {
     } catch (error) {
       showSnackbar("Checkout failed. Please try again.", "error");
     }
-  };
-
-  // Snackbar utility function for displaying messages
-  const showSnackbar = (message: string, type: "success" | "error") => {
-    setSnackbarMessage(message);
-    setSnackbarType(type);
-    setSnackbarOpen(true);
   };
 
   // Effect to handle redirection for non-logged-in users
@@ -110,10 +99,10 @@ const CartPage: React.FC = () => {
         <NoItemsInCart />
       )}
       <SnackbarMessage
-        open={snackbarOpen}
-        message={snackbarMessage}
-        type={snackbarType}
-        onClose={() => setSnackbarOpen(false)}
+        open={open}
+        message={message}
+        type={severity}
+        onClose={handleClose}
       />
       {showOrder && (
         <OrderSuccessNotification
