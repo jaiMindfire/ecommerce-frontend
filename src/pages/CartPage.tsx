@@ -19,21 +19,21 @@ import {
   useRemoveFromCartMutation,
   useMassAddToCartMutation,
   useCheckoutMutation,
-} from "../features/cart/cartApi";
+} from "@services/cartApi";
 import {
   selectCartItems,
   removeItemFromCart,
   updateItemQuantity,
   mergeLocalCart,
   clearCart,
-} from "../features/cart/cartSlice";
+} from "../store/redux/cartSlice";
 import CartProduct from "../components/CartProduct";
 import { useNavigate } from "react-router-dom";
-import { CartItem } from "../types/cartTypes";
+import { CartItem } from "../models/cartTypes";
 import OrderSuccessNotification from "./OrderSuccessPage";
 import NoItemsInCart from "../components/NoCartItems";
-import { setCheckedOut } from "../features/products/productsSlice";
-import { usePopup } from "../context/LoginPopupContext";
+import { setCheckedOut } from "../store/redux/productsSlice";
+import { usePopup } from "../store/context/LoginPopupContext";
 
 const CartPage: React.FC = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.token);

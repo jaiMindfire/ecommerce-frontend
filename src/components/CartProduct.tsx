@@ -1,6 +1,6 @@
 import React from "react";
 import { Add, Remove, Delete } from "@mui/icons-material";
-import { CartItem } from "../types/cartTypes";
+import { CartItem } from "../models/cartTypes";
 import {
   Box,
   Typography,

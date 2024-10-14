@@ -16,12 +16,12 @@ import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetProductByIdQuery } from "../features/products/productsApi";
-import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
-import { useAddToCartMutation } from "../features/cart/cartApi";
-import { setCheckedOut } from "../features/products/productsSlice";
+import { useGetProductByIdQuery } from "@services/productsApi";
+import { addItemToCart, removeItemFromCart } from "../store/redux/cartSlice";
+import { useAddToCartMutation } from "@services/cartApi";
+import { setCheckedOut } from "../store/redux/productsSlice";
 import useAddToCart from "../hooks/useAddToCart";
-import { usePopup } from "../context/LoginPopupContext";
+import { usePopup } from "../store/context/LoginPopupContext";
 
 const ProductImage = styled(CardMedia)(({ theme }) => ({
   height: 400,

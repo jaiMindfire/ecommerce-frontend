@@ -23,10 +23,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../features/auth/authApi";
-import { setCredentials } from "../features/auth/authSlice";
+import { useLoginMutation } from "@services/authApi";
+import { setCredentials } from "../store/redux/authSlice";
 import { RootState } from "../redux/store";
-import { usePopup } from "../context/LoginPopupContext";
+import { usePopup } from "../store/context/LoginPopupContext";
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),

@@ -25,9 +25,9 @@ import {
   setPriceRange,
   setSelectedCategory,
   setSelectedRating,
-} from "../features/products/productsSlice";
+} from "@store/redux/productsSlice";
 import { RootState } from "../redux/store";
-import { useGetCategoriesQuery } from "../features/products/productsApi";
+import { useGetCategoriesQuery } from "@services/productsApi";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { PaginatedProductsResponse, Product } from "../../types/prodctsType";
+import { PaginatedProductsResponse, Product } from "@models/prodctsType";
 
 export const productsApi = createApi({
   reducerPath: "productsApi",

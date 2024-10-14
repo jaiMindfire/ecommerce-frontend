@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { ThemeProviderWrapper } from "./context/ThemeContext";
+import { ThemeProviderWrapper } from "./store/context/ThemeContext";
 import { CssBaseline } from "@mui/material";
-import { PopupProvider } from "./context/LoginPopupContext";
+import { PopupProvider } from "./store/context/LoginPopupContext";
 
 const App: React.FC = () => {
   return (

@@ -22,7 +22,7 @@ import { styled } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-import { useSignupMutation } from "../features/auth/authApi";
+import { useSignupMutation } from "@services/authApi";
 import { BackgroundImage, StyledButton, StyledPaper } from "./LoginPage";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";

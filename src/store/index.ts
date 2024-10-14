@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { productsApi } from "@services/productsApi";
 import { authApi } from "@services/authApi";
-import authReducer from "../store/redux/authSlice";
-import productsReducer from "../store/redux/productsSlice";
-import cartReducer from "../store/redux/cartSlice";
+import authReducer from "./redux/authSlice";
+import productsReducer from "./redux/productsSlice";
+import cartReducer from "./redux/cartSlice";
 import { cartApi } from "@services/cartApi";
 
 export const store = configureStore({

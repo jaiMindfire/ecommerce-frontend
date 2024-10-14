@@ -14,15 +14,14 @@ import {
   Alert,
   Rating,
 } from "@mui/material";
-import { Product } from "../types/prodctsType";
+import { Product } from "../models/prodctsType";
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedProduct } from "../features/products/productsSlice";
+import { setSelectedProduct } from "../store/redux/productsSlice";
 import { useNavigate } from "react-router-dom";
-import { useAddToCartMutation } from "../features/cart/cartApi";
 import { RootState } from "../redux/store";
 import useAddToCart from "../hooks/useAddToCart";
-import { usePopup } from "../context/LoginPopupContext";
+import { usePopup } from "../store/context/LoginPopupContext";
 
 interface ProductCardProps {
   product: Product;

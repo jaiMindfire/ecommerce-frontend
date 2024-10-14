@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useGetProductsQuery } from "../features/products/productsApi";
+import { useGetProductsQuery } from "@services/productsApi";
 import ProductCard from "../components/ProductCard";
-import LoadingGrid from "../loaders/LoadingProducts";
+import LoadingGrid from "../components/loaders/LoadingProducts";
 import NoDataFound from "../components/NoDataFound";
 
 const ProductListPage: React.FC = () => {

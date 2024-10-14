@@ -21,16 +21,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { logout } from "../features/auth/authSlice";
-import { setSearchTerm } from "../features/products/productsSlice";
-import { useTheme } from "../context/ThemeContext";
+import { logout } from "../store/redux/authSlice";
+import { setSearchTerm } from "../store/redux/productsSlice";
+import { useTheme } from "../store/context/ThemeContext";
 import { styled, alpha } from "@mui/material/styles";
 import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
 import LoginSignupModal from "./LoginSignupModal";
-import { usePopup } from "../context/LoginPopupContext";
+import { usePopup } from "../store/context/LoginPopupContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
