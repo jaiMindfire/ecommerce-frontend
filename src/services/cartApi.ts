@@ -1,21 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { CartItem, CartResponse } from "@models/cartTypes";
 import { Product } from "@models/prodctsType";
+import errorHandlingMiddleware from "@middleware/errorHandlingMiddleware";
 
 export const cartApi = createApi({
   reducerPath: "cartApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
-      return headers;
-    },
-  }),
+  baseQuery: errorHandlingMiddleware(process.env.REACT_APP_API_URL),
   endpoints: (builder) => ({
     getCart: builder.query<CartResponse, void>({
       query: () => "/api/cart",
