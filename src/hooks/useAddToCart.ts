@@ -16,7 +16,7 @@ const useAddToCart = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   //redux-state
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth?.token);
   //hooks
   const dispatch = useDispatch();
   const [addToCartMutation, { isLoading }] = useAddToCartMutation();
@@ -47,6 +47,7 @@ const useAddToCart = () => {
       }
     } else {
       //If not in cart, make an API call to add the product
+
       addToCartMutation({
         productId: product._id,
         quantity: 1,

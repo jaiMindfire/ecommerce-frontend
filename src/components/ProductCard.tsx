@@ -73,8 +73,9 @@ const OutOfStockText = styled(Typography)(({ theme }) => ({
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   //redux-state
   const cartItems = useSelector((state: RootState) => state.cart.items);
+
   const isInCart = cartItems.find((item) => item.product?._id === product._id);
-  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth?.token);
   //hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
