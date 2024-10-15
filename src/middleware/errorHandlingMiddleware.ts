@@ -28,26 +28,27 @@ const errorHandlingMiddleware = (
     console.log(result, "erorrrrerere");
     // Modify or map status code here
     if (result.error) {
-      const { status, data } = result.error;
+      const { status } = result.error;
 
-      // 404 as 500 in your app
+      // changin 404 to 500
       if (status === 404) {
         result.error.status = 500; // Map 404 to 500 in the frontend
         result.error.data = "Internal Server Error - Resource not found.";
       }
-      switch (result.error.status) {
-        case 401:
-          result.error.data = "Unauthorized - Please log in.";
-          break;
-        case 403:
-          result.error.data = "Forbidden - You do not have access.";
-          break;
-        case 500:
-          result.error.data = "Internal Server Error - Please try again later.";
-          break;
-        default:
-          result.error.data = "An unexpected error occurred.";
-      }
+      
+    //   switch (result.error.status) {
+    //     case 401:
+    //       result.error.data = "Unauthorized - Please log in.";
+    //       break;
+    //     case 403:
+    //       result.error.data = "Forbidden - You do not have access.";
+    //       break;
+    //     case 500:
+    //       result.error.data = "Internal Server Error - Please try again later.";
+    //       break;
+    //     default:
+    //       result.error.data = "An unexpected error occurred.";
+    //   }
     }
 
     return result;

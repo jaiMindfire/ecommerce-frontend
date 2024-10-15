@@ -5,7 +5,7 @@ interface PopupContextProps {
   openModal: () => void;
   closeModal: () => void;
 }
-
+//Context to manage state of opening and closing login popup
 const PopupContext = createContext<PopupContextProps | undefined>(undefined);
 
 export const PopupProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

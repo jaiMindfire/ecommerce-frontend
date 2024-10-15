@@ -99,7 +99,7 @@ const LoginPage: React.FC = () => {
       }
       closeModal();
     } catch (error: any) {
-      showSnackbar(LOGIN_MESSAGES.loginError, "error");
+      showSnackbar(error.data.message, "error");
     } finally {
       setLoading(false);
     }

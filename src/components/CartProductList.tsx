@@ -31,12 +31,13 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
   const handleRemoveItem = (productId: string) => {
     setLoadingItemId(productId);
     removeFromCart({ productId })
+      .unwrap()
       .then(() => {
         dispatch(removeItemFromCart(productId)); //Remove item from cart action
         showSnackbar("Item removed successfully!", "success");
       })
-      .catch(() => {
-        showSnackbar("Failed to remove item.", "error");
+      .catch((error) => {
+        showSnackbar(error.data, "error");
       })
       .finally(() => {
         setLoadingItemId(null);

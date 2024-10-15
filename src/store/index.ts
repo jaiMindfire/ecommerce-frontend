@@ -4,7 +4,7 @@ import { authApi } from "@services/authApi";
 import authReducer from "./redux/authSlice";
 import productsReducer from "./redux/productsSlice";
 import cartReducer from "./redux/cartSlice";
-import themeReducer from "@store/redux/themeSlice"
+import themeReducer from "@store/redux/themeSlice";
 import { cartApi } from "@services/cartApi";
 
 export const store = configureStore({

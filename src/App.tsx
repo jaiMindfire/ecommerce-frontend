@@ -12,6 +12,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      {/* for login/signup popup  */}
       <PopupProvider>
         <Outlet />
       </PopupProvider>
