@@ -1,6 +1,6 @@
-//React Imports
+// React Imports
 import React, { useState } from "react";
-//3rd Party Imports
+// 3rd Party Imports
 import {
   AppBar,
   Toolbar,
@@ -24,7 +24,7 @@ import {
 import { styled, alpha } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-//Static Imports
+// Static Imports
 import { RootState } from "@store/index";
 import { logout } from "@store/redux/authSlice";
 import { setSearchTerm } from "@store/redux/productsSlice";
@@ -37,10 +37,7 @@ import { APP_ICON, AVATAR_URL } from "@constants/index";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
+  backgroundColor: alpha(theme.palette.primary.light, 0.15),
   marginRight: theme.spacing(2),
   marginLeft: 0,
   width: "100%",
@@ -93,13 +90,15 @@ const Navbar: React.FC = () => {
   };
 
   //Function to handle search input to search products
-  const handleSearch = (e: any) => {
-    dispatch(setSearchTerm(e.target.value));
-    navigate("/");
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      dispatch(setSearchTerm((e.target as HTMLInputElement).value));
+      navigate("/");
+    }
   };
 
   //Function to clear search term if input is empty
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "") {
       dispatch(setSearchTerm(e.target.value));
     }
@@ -117,7 +116,7 @@ const Navbar: React.FC = () => {
 
   // Function to handle user logout
   const handleLogout = () => {
-    dispatch(logout()); //logout action
+    dispatch(logout());
     handleClose();
     navigate("/");
     openModal();
@@ -145,6 +144,7 @@ const Navbar: React.FC = () => {
               cursor: "pointer",
             }}
             onClick={() => navigate("/")}
+            aria-label="Home"
           >
             {APP_ICON}
           </Typography>
@@ -155,24 +155,22 @@ const Navbar: React.FC = () => {
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch(e);
-                }
-              }}
+              onKeyDown={handleSearch}
               onChange={handleChange}
+              aria-label="Search products"
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-
-          <Switch
-            checked={isDarkMode}
-            onChange={handleToggleTheme}
-            icon={<LightModeIcon />}
-            checkedIcon={<DarkModeIcon />}
-          />
-
-          <IconButton color="inherit">
+          <label htmlFor="theme-switch">
+            <Switch
+              id="theme-switch"
+              checked={isDarkMode}
+              onChange={handleToggleTheme}
+              icon={<LightModeIcon />}
+              checkedIcon={<DarkModeIcon />}
+            />
+          </label>
+          <IconButton color="inherit" title="View cart" aria-label="View cart">
             <Badge badgeContent={cartItems.length} color="error">
               <ShoppingCartIcon onClick={handleCartClick} />
             </Badge>
@@ -180,31 +178,26 @@ const Navbar: React.FC = () => {
 
           {isLoggedIn ? (
             <>
-              <IconButton edge="end" color="inherit" onClick={handleMenu}>
-                <Avatar
-                  alt="User Avatar"
-                  src={AVATAR_URL}
-                >
-                </Avatar>
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={handleMenu}
+                aria-label="User menu"
+              >
+                <Avatar alt="User Avatar" src={AVATAR_URL}></Avatar>
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
           ) : (
-            <IconButton color="inherit" onClick={openModal}>
+            <IconButton color="inherit" onClick={openModal} aria-label="Login">
               <AccountCircleIcon />
               <Typography variant="body1" sx={{ ml: 1 }}>
                 Login
@@ -218,8 +211,9 @@ const Navbar: React.FC = () => {
         anchor="left"
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
+        aria-labelledby="drawer-title"
       >
-        <Typography variant="h5" sx={{ p: 2 }}>
+        <Typography id="drawer-title" variant="h5" sx={{ p: 2 }}>
           {APP_ICON}
         </Typography>
       </Drawer>
