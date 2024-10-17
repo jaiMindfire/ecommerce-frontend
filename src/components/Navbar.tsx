@@ -154,7 +154,7 @@ const Navbar: React.FC = () => {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Search Products"
               onKeyDown={handleSearch}
               onChange={handleChange}
               aria-label="Search products"
@@ -168,6 +168,7 @@ const Navbar: React.FC = () => {
               onChange={handleToggleTheme}
               icon={<LightModeIcon />}
               checkedIcon={<DarkModeIcon />}
+              inputProps={{ "aria-label": "theme-switch" }}
             />
           </label>
           <IconButton color="inherit" title="View cart" aria-label="View cart">

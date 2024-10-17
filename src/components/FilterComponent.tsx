@@ -16,6 +16,8 @@ import {
   useTheme,
   SelectChangeEvent,
   CircularProgress,
+  Card,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -31,7 +33,7 @@ import { RootState } from "@store/index";
 import { useGetCategoriesQuery } from "@services/productsApi";
 
 // Styled Components
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(3),
   borderRadius: theme.shape.borderRadius,
@@ -160,6 +162,7 @@ const ShoppingFilterPage: React.FC = () => {
                   checked={selectedCategory.includes(brand)}
                   onChange={handleBrandChange}
                   name={brand}
+                  aria-label={`Select category ${brand}`}
                 />
               }
               label={brand}
@@ -169,14 +172,16 @@ const ShoppingFilterPage: React.FC = () => {
       </StyledBox>
 
       <StyledBox sx={{ marginTop: 2 }}>
-        <Typography variant="subtitle1" gutterBottom>
+        {/* <Typography variant="subtitle1" gutterBottom>
           Rating
-        </Typography>
+        </Typography> */}
+        <InputLabel id="rating-select-label">Rating</InputLabel>
         <Select
           value={selectedRating}
           onChange={handleRatingChange}
           fullWidth
-          aria-label="Select rating"
+          labelId="rating-select-label"
+          id="select"
         >
           <MenuItem value={0}>All Ratings</MenuItem>
           {[4, 3, 2, 1].map((rating) => (
