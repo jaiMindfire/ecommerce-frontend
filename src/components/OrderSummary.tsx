@@ -25,7 +25,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 }) => {
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const totalAmount = items.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+    (acc, item) => acc + item.product?.price * item.quantity,
     0
   );
 

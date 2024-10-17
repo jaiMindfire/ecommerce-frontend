@@ -43,7 +43,7 @@ const CartPage: React.FC = () => {
   // Function to handle the checkout process
   const handleCheckout = async () => {
     const totalAmount = items.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
+      (acc, item) => acc + item.product?.price * item.quantity,
       0
     );
     const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);

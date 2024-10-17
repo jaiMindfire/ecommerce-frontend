@@ -108,10 +108,11 @@ const CartProduct: React.FC<CartItemProps> = ({
             aria-label="Decrease quantity"
             size="small"
             sx={{
-              backgroundColor: theme.palette.grey[200],
+              backgroundColor: theme.palette.primary.main,
               "&:hover": {
-                backgroundColor: theme.palette.grey[300],
+                backgroundColor: theme.palette.primary.light,
               },
+              color: "#ffffff",
             }}
           >
             <Remove />
@@ -136,10 +137,11 @@ const CartProduct: React.FC<CartItemProps> = ({
             aria-label="Increase quantity"
             size="small"
             sx={{
-              backgroundColor: theme.palette.grey[200],
+              backgroundColor: theme.palette.primary.main,
               "&:hover": {
-                backgroundColor: theme.palette.grey[300],
+                backgroundColor: theme.palette.primary.light,
               },
+              color: "#ffffff",
             }}
           >
             <Add />
