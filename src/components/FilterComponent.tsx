@@ -15,6 +15,7 @@ import {
   useMediaQuery,
   useTheme,
   SelectChangeEvent,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -41,6 +42,14 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+export const SpinnerWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "10vh",
+  backgroundColor: theme.palette.background.default,
+}));
+
 const ShoppingFilterPage: React.FC = () => {
   //states
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -55,7 +64,7 @@ const ShoppingFilterPage: React.FC = () => {
   //hooks
   const theme = useTheme();
   const isMobile = useMediaQuery("(max-width:1000px)");
-  const { data: categories } = useGetCategoriesQuery();
+  const { data: categories, isFetching } = useGetCategoriesQuery();
   const dispatch = useDispatch();
   //variables
   let debounceTimer: any;
@@ -134,21 +143,29 @@ const ShoppingFilterPage: React.FC = () => {
 
       <StyledBox sx={{ marginTop: 2 }}>
         <Typography variant="subtitle1" gutterBottom>
-          Brand
+          Categories
         </Typography>
-        {categories?.map((brand) => (
-          <FormControlLabel
-            key={brand}
-            control={
-              <Checkbox
-                checked={selectedCategory.includes(brand)}
-                onChange={handleBrandChange}
-                name={brand}
-              />
-            }
-            label={brand}
-          />
-        ))}
+        {
+          isFetching
+          ?
+          <SpinnerWrapper>
+            <CircularProgress/>
+          </SpinnerWrapper>
+          :
+          categories?.map((brand) => (
+            <FormControlLabel
+              key={brand}
+              control={
+                <Checkbox
+                  checked={selectedCategory.includes(brand)}
+                  onChange={handleBrandChange}
+                  name={brand}
+                />
+              }
+              label={brand}
+            />
+          ))
+        }
       </StyledBox>
 
       <StyledBox sx={{ marginTop: 2 }}>

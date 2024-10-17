@@ -24,6 +24,7 @@ import { setCheckedOut } from "@store/redux/productsSlice";
 import { handleMergeLocalCart } from "@utils/cartUtils";
 import OrderSuccessNotification from "./OrderSuccessPage";
 import { useSnackbar } from "@hooks/useSnackbar";
+import LoadingSpinner from "@components/LoadingSpinner";
 
 const CartPage: React.FC = () => {
   //states
@@ -75,7 +76,7 @@ const CartPage: React.FC = () => {
   }, [cartItems, isLoggedIn, dispatch, massAddToCart]);
 
   if (isLoading) {
-    return <CircularProgress />;
+    return <LoadingSpinner/>;
   }
 
   return (

@@ -25,6 +25,7 @@ import { setCheckedOut } from "@store/redux/productsSlice";
 import useAddToCart from "@hooks/useAddToCart";
 import { usePopup } from "@store/context/LoginPopupContext";
 import { PRODUCT_MESSAGES } from "@constants/index";
+import LoadingSpinner from "@components/LoadingSpinner";
 
 
 const ProductImage = styled(CardMedia)(({ theme }) => ({
@@ -97,7 +98,7 @@ const ProductDetailPage: React.FC = () => {
 
   // Loading state
   if (isLoadingProduct) {
-    return <CircularProgress />; // Show loading spinner
+    return <LoadingSpinner/>; // Show loading spinner
   }
 
   // Error handling

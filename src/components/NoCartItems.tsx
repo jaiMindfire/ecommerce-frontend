@@ -13,7 +13,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  minHeight: "100vh",
+  minHeight: "80vh",
   backgroundColor: theme.palette.background.default,
   color: theme.palette.text.primary,
 }));
