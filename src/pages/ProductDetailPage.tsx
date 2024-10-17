@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// React Imports
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -12,16 +13,20 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+// 3rd Party Imports
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetProductByIdQuery } from "../features/products/productsApi";
-import { addItemToCart, removeItemFromCart } from "../features/cart/cartSlice";
-import { useAddToCartMutation } from "../features/cart/cartApi";
-import { setCheckedOut } from "../features/products/productsSlice";
-import useAddToCart from "../hooks/useAddToCart";
-import { usePopup } from "../context/LoginPopupContext";
+// Static Imports
+import { RootState } from "@store/index";
+import { useGetProductByIdQuery } from "@services/productsApi";
+import { useAddToCartMutation } from "@services/cartApi";
+import { setCheckedOut } from "@store/redux/productsSlice";
+import useAddToCart from "@hooks/useAddToCart";
+import { usePopup } from "@store/context/LoginPopupContext";
+import { PRODUCT_MESSAGES } from "@constants/index";
+import LoadingSpinner from "@components/LoadingSpinner";
+
 
 const ProductImage = styled(CardMedia)(({ theme }) => ({
   height: 400,
@@ -46,6 +51,11 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 const ProductDetailPage: React.FC = () => {
+  // Redux states
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
+
+  // Hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -54,31 +64,12 @@ const ProductDetailPage: React.FC = () => {
     error,
     isLoading: isLoadingProduct,
     refetch,
-  } = useGetProductByIdQuery(id || "");
+  } = useGetProductByIdQuery(id || ""); // Fetch product by ID
   const checkedOutItems = useSelector(
     (state: RootState) => state.products.checkedOutItems
   );
   const [addToCart, { isLoading }] = useAddToCartMutation();
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-  const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
-  const isInCart = cartItems.find((item) => item.product?._id === product?._id);
-
   const { openModal } = usePopup();
-
-  const isInCheckoutItems = checkedOutItems.find(
-    (item) => item.product._id === product?._id
-  );
-
-  useEffect(() => {
-    console.log(isInCheckoutItems, "dddd");
-    if (isInCheckoutItems) {
-      refetch();
-      const newItems = checkedOutItems.filter(
-        (item) => item.product?._id !== product?._id
-      );
-      dispatch(setCheckedOut(newItems));
-    }
-  }, []);
 
   const {
     handleAddToCart,
@@ -86,14 +77,33 @@ const ProductDetailPage: React.FC = () => {
     snackbarSeverity,
     openSnackbar,
     handleSnackbarClose,
-  } = useAddToCart();
+  } = useAddToCart(); // Custom hook for cart handling
 
+  // Variables
+  const isInCart = cartItems.find((item) => item.product?._id === product?._id);
+  const isInCheckoutItems = checkedOutItems.find(
+    (item) => item.product._id === product?._id
+  );
+
+  // Effect to handle checkout items
+  useEffect(() => {
+    if (isInCheckoutItems) {
+      refetch(); // Refetching the data for current product if it's already checked out to update quantity.
+      const newItems = checkedOutItems.filter(
+        (item) => item.product?._id !== product?._id
+      );
+      dispatch(setCheckedOut(newItems)); // Update checked out items
+    }
+  }, [isInCheckoutItems, checkedOutItems, product?._id, dispatch, refetch]);
+
+  // Loading state
   if (isLoadingProduct) {
-    return <CircularProgress />;
+    return <LoadingSpinner/>; // Show loading spinner
   }
 
+  // Error handling
   if (error) {
-    return <Typography variant="h6">Failed to load product.</Typography>;
+    return <Typography variant="h6">{PRODUCT_MESSAGES.error.loadProduct}</Typography>;
   }
 
   return (
@@ -116,7 +126,7 @@ const ProductDetailPage: React.FC = () => {
           </Typography>
           <Box sx={{ mb: 2 }}>
             <Chip
-              label={(product?.stock || 0) > 0 ? "In Stock" : "Out of Stock"}
+              label={(product?.stock || 0) > 0 ? PRODUCT_MESSAGES.stock.inStock : PRODUCT_MESSAGES.stock.outOfStock}
               color={(product?.stock || 0) > 0 ? "success" : "error"}
             />
             <Typography variant="body2" sx={{ mt: 1 }}>
@@ -138,9 +148,9 @@ const ProductDetailPage: React.FC = () => {
                 e.stopPropagation();
                 handleAddToCart(product, navigate, isLoggedIn, openModal);
               }}
-              disabled={product?.stock === 0 || isLoading}
+              disabled={product?.stock === 0 || isLoading} // Disable button if out of stock or loading
             >
-              {isInCart ? "Go To Cart" : "Add To Cart"}
+              {isInCart ? PRODUCT_MESSAGES.button.goToCart : PRODUCT_MESSAGES.button.addToCart}
             </ActionButton>
           </Box>
         </Grid>
@@ -148,7 +158,7 @@ const ProductDetailPage: React.FC = () => {
 
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={3000}
+        autoHideDuration={PRODUCT_MESSAGES.snackbar.autoHideDuration}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
@@ -157,7 +167,7 @@ const ProductDetailPage: React.FC = () => {
           severity={snackbarSeverity}
           sx={{ width: "100%" }}
         >
-          {snackbarMessage}
+          {snackbarMessage} {/* Snackbar message */}
         </Alert>
       </Snackbar>
     </Box>

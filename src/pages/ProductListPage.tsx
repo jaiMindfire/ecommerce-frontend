@@ -1,23 +1,30 @@
+// React Imports
 import React, { useEffect, useState, useRef } from "react";
+// 3rd Party Imports
 import { Box, Grid, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { useGetProductsQuery } from "../features/products/productsApi";
-import ProductCard from "../components/ProductCard";
-import LoadingGrid from "../loaders/LoadingProducts";
-import NoDataFound from "../components/NoDataFound";
+// Static Imports
+import { RootState } from "@store/index";
+import { useGetProductsQuery } from "@services/productsApi";
+import ProductCard from "@components/ProductCard";
+import LoadingGrid from "@components/ProductLoaderSkeleton/LoadingProducts";
+import NoDataFound from "@components/NoDataFound";
+import { LIMIT, SCROLL_THRESHOLD, PRODUCT_LIST } from "@constants/index";
 
 const ProductListPage: React.FC = () => {
+  // States
   const [page, setPage] = useState(1);
   const [productsList, setProductsList] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const search = useSelector((state: RootState) => state.products.searchTerm);
-  const limit = 8;
 
+  // Redux states
+  const search = useSelector((state: RootState) => state.products.searchTerm);
   const { priceRange, selectedCategory, selectedRating } = useSelector(
     (state: RootState) => state.products
   );
 
+  // Hooks
+  const limit = LIMIT;
   const {
     data: products,
     error,
@@ -32,40 +39,16 @@ const ProductListPage: React.FC = () => {
     rating: selectedRating,
   });
 
+  // Refs
   const listRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    setPage(1);
-    setProductsList([]);
-    setHasMore(true);
-  }, [search, priceRange, selectedCategory, selectedRating]);
 
-  useEffect(() => {
-    if (products?.data) {
-      setProductsList((prevProducts) => {
-        if (page === 1) {
-          return products.data;
-        } else {
-          const newProducts = products.data.filter(
-            (newProduct) =>
-              !prevProducts.some(
-                (prevProduct) => prevProduct._id === newProduct._id
-              )
-          );
-          return [...prevProducts, ...newProducts];
-        }
-      });
-      if (products.data.length < limit) {
-        setHasMore(false);
-      }
-    }
-  }, [products, page, limit]);
-
+  // Function to handle infinite scroll
   const handleScroll = () => {
     const container = listRef.current;
     if (container) {
       const { scrollTop, scrollHeight, clientHeight } = container;
       if (
-        scrollTop + clientHeight >= scrollHeight - 5 &&
+        scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD &&
         !isFetching &&
         hasMore
       ) {
@@ -74,6 +57,41 @@ const ProductListPage: React.FC = () => {
     }
   };
 
+  // Function to update the product list
+  const updateProductList = (newProducts: any[]) => {
+    setProductsList((prevProducts) => {
+      if (page === 1) {
+        return newProducts;
+      } else {
+        const filteredProducts = newProducts.filter(
+          (newProduct) =>
+            !prevProducts.some(
+              (prevProduct) => prevProduct._id === newProduct._id
+            )
+        );
+        return [...prevProducts, ...filteredProducts];
+      }
+    });
+  };
+
+  // Effect to reset pagination and product list on filter changes
+  useEffect(() => {
+    setPage(1);
+    setProductsList([]);
+    setHasMore(true);
+  }, [search, priceRange, selectedCategory, selectedRating]);
+
+  // Effect to update product list based on fetched products
+  useEffect(() => {
+    if (products?.data) {
+      updateProductList(products.data);
+      if (products.data.length < limit) {
+        setHasMore(false);
+      }
+    }
+  }, [products, page, limit]);
+
+  // Effect to handle scroll event listener
   useEffect(() => {
     const container = listRef.current;
     if (container) {
@@ -117,7 +135,9 @@ const ProductListPage: React.FC = () => {
 
       {!isFetching && productsList.length === 0 && <NoDataFound />}
 
-      {error && <Typography color="error">Error loading products</Typography>}
+      {error && (
+        <Typography color="error">{PRODUCT_LIST.errorLoadingProducts}</Typography>
+      )}
     </Box>
   );
 };

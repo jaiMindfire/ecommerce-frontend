@@ -1,19 +1,27 @@
-import React, { useState, Suspense, lazy } from 'react';
-import { Dialog, DialogContent, Tabs, Tab, Box } from '@mui/material';
-import SkeletonLoader from './LoginSkeleton';
+//React Imports
+import React, { useState, Suspense, lazy } from "react";
+//3rd Party Imports
+import { Dialog, DialogContent, Tabs, Tab, Box } from "@mui/material";
+//Static Imports
+import SkeletonLoader from "./LoginSkeleton";
+// Lazy-loaded components
+const LoginPage = lazy(() => import("@pages/LoginPage"));
+const SignupPage = lazy(() => import("@pages/SignupPage"));
 
-
-const LoginPage = lazy(() => import('../pages/LoginPage'));
-const SignupPage = lazy(() => import('../pages/SignupPage'));
-
+// Props interface for LoginSignupModal
 interface LoginSignupModalProps {
   open: boolean;
   handleClose: () => void;
 }
 
-const LoginSignupModal: React.FC<LoginSignupModalProps> = ({ open, handleClose }) => {
+const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
+  open,
+  handleClose,
+}) => {
+  //states
   const [tabValue, setTabValue] = useState<number>(0);
 
+  // Handle tab change
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -27,11 +35,7 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({ open, handleClose }
       aria-labelledby="login-signup-dialog"
       aria-describedby="login-signup-content"
     >
-      <DialogContent
-        dividers
-        sx={{
-        }}
-      >
+      <DialogContent dividers>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
@@ -42,7 +46,7 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({ open, handleClose }
           <Tab label="Signup" />
         </Tabs>
 
-        <Suspense fallback={<SkeletonLoader/>}>
+        <Suspense fallback={<SkeletonLoader />}>
           {tabValue === 0 && <LoginPage />}
           {tabValue === 1 && <SignupPage />}
         </Suspense>

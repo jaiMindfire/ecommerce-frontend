@@ -1,108 +1,76 @@
+// React Imports
 import React, { useEffect, useState } from "react";
+// 3rd Party Imports
 import { useFormik } from "formik";
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Paper,
-  TextField,
-  Typography,
-  useTheme,
-  Snackbar,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
-import { styled } from "@mui/system";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
-import { useSignupMutation } from "../features/auth/authApi";
-import { BackgroundImage, StyledButton, StyledPaper } from "./LoginPage";
+import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { useNavigate } from "react-router-dom";
+// Static Imports
+import { useSignupMutation } from "@services/authApi";
+import { BackgroundImage, StyledPaper } from "./LoginPage";
+import { RootState } from "@store/index";
+import SubmitButton from "@components/FormSubmitButton";
+import FormInput from "@components/FormInput";
+import { getValidationSchema } from "@utils/validationSchema";
+import { useSnackbar } from "@hooks/useSnackbar";
+import SnackbarMessage from "@components/SnackbarMessage";
+import { SIGNUP_MESSAGES } from "@constants/index"; // Importing constants for messages
 
-const SignupPage: React.FC = ({}) => {
-  const navigate = useNavigate();
-  const [signup] = useSignupMutation();
+const SignupPage: React.FC = () => {
+  //states
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const theme = useTheme();
-
+  //redux-states
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn, navigate]);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
-  const [loading, setLoading] = useState(false); 
-
-  const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email format").required("Required"),
-    password: Yup.string()
-      .min(6, "Password should be at least 6 characters")
-      .required("Required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Required"),
-  });
-
+  //hooks
+  const navigate = useNavigate();
+  const [signup] = useSignupMutation(); // Mutation hook for signing up
+  const theme = useTheme(); // Access the theme for styling
+  const { open, message, severity, showSnackbar, handleClose } = useSnackbar();
+  // Formik setup for form handling
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
       confirmPassword: "",
     },
-    validationSchema,
+    validationSchema: getValidationSchema(true), // Validation schema for signup
     onSubmit: async (values) => {
-      setLoading(true);
-      try {
-        await signup({
-          email: values.email,
-          password: values.password,
-        }).unwrap();
-        setSnackbarMessage("Signup successful");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
-        formik.resetForm();
-        navigate("/");
-      } catch (error: any) {
-        setSnackbarMessage(error?.data?.message);
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
-      } finally {
-        setLoading(false);
-      }
+      await formSubmit(values); // Call form submit function on form submit
     },
   });
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
+  // Function to handle form submission
+  const formSubmit = async (values: any) => {
+    setLoading(true);
+    try {
+      // Call the signup mutation
+      await signup({
+        email: values.email,
+        password: values.password,
+      }).unwrap();
+      showSnackbar(SIGNUP_MESSAGES.signupSuccess, "success"); 
+      formik.resetForm();
+      navigate("/"); // Redirect to home page after successful signup
+    } catch (error: any) {
+      // Show error message if signup fails
+      showSnackbar(error?.data?.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+  // Effect to redirect if the user is already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/"); // Redirect to home page if logged in
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <Container component="main" maxWidth="xs">
-      <BackgroundImage />
+      <BackgroundImage /> {/* Background image for the signup page */}
       <Box
         sx={{
           alignItems: "center",
@@ -120,135 +88,74 @@ const SignupPage: React.FC = ({}) => {
               color: theme.palette.mode === "dark" ? "white" : "primary.main",
             }}
           >
-            Signup
+            {SIGNUP_MESSAGES.signupButton} {/* Signup button label */}
           </Typography>
           <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="email"
+                <FormInput
+                  label={SIGNUP_MESSAGES.emailLabel} // Email input label
                   name="email"
-                  label="Email Address"
                   value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  handleChange={formik.handleChange}
+                  handleBlur={formik.handleBlur}
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
-                  InputLabelProps={{
-                    style: { color: theme.palette.text.primary },
-                  }}
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel htmlFor="password">Password</InputLabel>
-                  <OutlinedInput
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formik.values.password}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={
-                      formik.touched.password && Boolean(formik.errors.password)
-                    }
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
-                  />
-                  {formik.touched.password && formik.errors.password && (
-                    <Typography variant="caption" color="error">
-                      {formik.errors.password}
-                    </Typography>
-                  )}
-                </FormControl>
+                <FormInput
+                  label={SIGNUP_MESSAGES.passwordLabel} // Password input label
+                  name="password"
+                  isPassword
+                  showPassword={showPassword}
+                  toggleShowPassword={() => setShowPassword(!showPassword)}
+                  value={formik.values.password}
+                  handleChange={formik.handleChange}
+                  handleBlur={formik.handleBlur}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={formik.touched.password && formik.errors.password}
+                />
               </Grid>
               <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel htmlFor="confirmPassword">
-                    Confirm Password
-                  </InputLabel>
-                  <OutlinedInput
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formik.values.confirmPassword}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={
-                      formik.touched.confirmPassword &&
-                      Boolean(formik.errors.confirmPassword)
-                    }
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle confirm password visibility"
-                          onClick={handleClickShowConfirmPassword}
-                          edge="end"
-                        >
-                          {showConfirmPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Confirm Password"
-                  />
-                  {formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword && (
-                      <Typography variant="caption" color="error">
-                        {formik.errors.confirmPassword}
-                      </Typography>
-                    )}
-                </FormControl>
+                <FormInput
+                  label={SIGNUP_MESSAGES.confirmPasswordLabel} // Confirm password input label
+                  name="confirmPassword"
+                  isPassword
+                  showPassword={showConfirmPassword}
+                  toggleShowPassword={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
+                  value={formik.values.confirmPassword}
+                  handleChange={formik.handleChange}
+                  handleBlur={formik.handleBlur}
+                  error={
+                    formik.touched.confirmPassword &&
+                    Boolean(formik.errors.confirmPassword)
+                  }
+                  helperText={
+                    formik.touched.confirmPassword &&
+                    formik.errors.confirmPassword
+                  }
+                />
               </Grid>
             </Grid>
-            <StyledButton
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              disabled={loading} 
-            >
-              {loading ? <CircularProgress size={24} /> : "Signup"}{" "}
-              {/* Show loading spinner */}
-            </StyledButton>
+            <SubmitButton
+              loading={loading}
+              label={SIGNUP_MESSAGES.signupButton}
+            />{" "}
+            {/* Submit button */}
           </form>
-          {/* <Box mt={2}>
-            <Typography variant="body2">
-              Already have an account?{" "}
-              <Link to="/login" color="primary">
-                Login
-              </Link>
-            </Typography>
-          </Box> */}
         </StyledPaper>
       </Box>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <SnackbarMessage
+        open={open}
+        message={message}
+        type={severity}
+        onClose={handleClose}
+      />
     </Container>
   );
 };

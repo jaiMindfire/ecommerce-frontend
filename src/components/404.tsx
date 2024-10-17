@@ -1,9 +1,10 @@
-import React from "react";
+//3rd party imports
 import { Typography, Button, Container, Grid } from "@mui/material";
 import { ErrorOutline } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 
+//styles using styled-component
 const StyledContainer = styled(Container)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -31,7 +32,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 const NotFound404 = () => {
   const navigate = useNavigate();
-
   return (
     <StyledContainer maxWidth="md">
       <Grid container spacing={3} justifyContent="center" alignItems="center">

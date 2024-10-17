@@ -1,26 +1,19 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CartItem, CartResponse } from "../../types/cartTypes";
-import { Product } from "../../types/prodctsType";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { CartItem, CartResponse } from "@models/cartTypes";
+import { Product } from "@models/prodctsType";
+import errorHandlingMiddleware from "@middleware/errorHandlingMiddleware";
 
+// Create an API slice for cart-related operations
 export const cartApi = createApi({
-  reducerPath: "cartApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
-      return headers;
-    },
-  }),
+  reducerPath: "cartApi", // Unique key for the slice in the Redux store
+  baseQuery: errorHandlingMiddleware(process.env.REACT_APP_API_URL), // Base URL and error handling middleware for API requests
   endpoints: (builder) => ({
+    // Fetch the current user's cart
     getCart: builder.query<CartResponse, void>({
       query: () => "/api/cart",
     }),
 
+    // Add a product to the cart
     addToCart: builder.mutation<
       void,
       { productId: string; quantity: number; product: Product }
@@ -28,10 +21,11 @@ export const cartApi = createApi({
       query: ({ productId, quantity }) => ({
         url: "/api/cart",
         method: "POST",
-        body: { productId, quantity },
+        body: { productId, quantity }, // Product ID and quantity to add
       }),
     }),
 
+    // Update the quantity of an existing cart item
     updateCartItem: builder.mutation<
       void,
       { productId: string; quantity: number }
@@ -39,10 +33,11 @@ export const cartApi = createApi({
       query: ({ productId, quantity }) => ({
         url: `/api/cart/`,
         method: "PUT",
-        body: { productId, quantity },
+        body: { productId, quantity }, // Updated product ID and quantity
       }),
     }),
 
+    // Remove a product from the cart
     removeFromCart: builder.mutation<void, { productId: string }>({
       query: ({ productId }) => ({
         url: `/api/cart/${productId}`,
@@ -50,20 +45,16 @@ export const cartApi = createApi({
       }),
     }),
 
-    syncCart: builder.mutation<CartItem[], CartItem[]>({
-      query: (localCart) => ({
-        url: "/api/cart/sync",
-        method: "POST",
-        body: { items: localCart },
-      }),
-    }),
+    // Add multiple items to the cart in one request
     massAddToCart: builder.mutation<void, CartItem[]>({
       query: (items) => ({
         url: "/api/cart/mass-add",
         method: "POST",
-        body: { items },
+        body: { items }, // Array of cart items to add
       }),
     }),
+
+    // Checkout the current cart
     checkout: builder.mutation<void, void>({
       query: () => ({
         url: "/api/cart/checkout",
@@ -78,7 +69,6 @@ export const {
   useAddToCartMutation,
   useUpdateCartItemMutation,
   useRemoveFromCartMutation,
-  useSyncCartMutation,
   useMassAddToCartMutation,
   useCheckoutMutation,
 } = cartApi;

@@ -1,26 +1,34 @@
+// React Imports
 import React, { useState } from "react";
+// 3rd Party Imports
 import { CheckCircle, Close } from "@mui/icons-material";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { CHECKOUT_MESSAGES } from "@constants/index";
 
+
+// Component Props Interface
 interface OrderSuccessNotificationProps {
   totalAmount: string;
   totalItems: number;
 }
 
+// OrderSuccessNotification Component
 const OrderSuccessNotification: React.FC<OrderSuccessNotificationProps> = ({
   totalAmount,
   totalItems,
 }) => {
+  // State to manage visibility of the notification
   const [isVisible, setIsVisible] = useState(true);
   const theme = useTheme();
-
   const navigate = useNavigate();
 
+  // Handler to dismiss the notification
   const handleDismiss = () => {
     setIsVisible(false);
   };
 
+  // Return null if the notification is not visible
   if (!isVisible) return null;
 
   return (
@@ -67,7 +75,7 @@ const OrderSuccessNotification: React.FC<OrderSuccessNotificationProps> = ({
                 : theme.palette.grey[800],
           }}
         >
-          Order Placed Successfully!
+          {CHECKOUT_MESSAGES.orderSuccess}
         </Typography>
       </Box>
 
@@ -80,13 +88,13 @@ const OrderSuccessNotification: React.FC<OrderSuccessNotificationProps> = ({
               : theme.palette.grey[700],
         }}
       >
-        Your order has been confirmed.
+        {CHECKOUT_MESSAGES.orderConfirmed}
         <br />
         Total Items: {totalItems}
         <br />
         Total Amount: ${totalAmount}
         <br />
-        Expected Delivery: June 15, 2025
+        {CHECKOUT_MESSAGES.expectedDelivery}
       </Typography>
 
       <Box
@@ -103,7 +111,7 @@ const OrderSuccessNotification: React.FC<OrderSuccessNotificationProps> = ({
             navigate("/");
           }}
         >
-          Continue Shopping
+          {CHECKOUT_MESSAGES.continueShopping}
         </Button>
         <IconButton
           onClick={handleDismiss}

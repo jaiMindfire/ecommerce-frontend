@@ -1,6 +1,7 @@
-import React from "react";
+//3rd Party Imports
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
+//Static Imports
+import Navbar from "@components/Navbar";
 
 function NavbarLayout() {
   return (

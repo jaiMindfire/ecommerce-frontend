@@ -1,6 +1,7 @@
+//React Imports
 import React from "react";
+// 3rd Party Imports
 import { Add, Remove, Delete } from "@mui/icons-material";
-import { CartItem } from "../types/cartTypes";
 import {
   Box,
   Typography,
@@ -13,14 +14,18 @@ import {
   useTheme,
   CircularProgress,
 } from "@mui/material";
+// Static Imports
+import { CartItem } from "@models/cartTypes";
 
+// Interface for the component props
 interface CartItemProps {
   item: CartItem;
   handleUpdateQuantity: (quantity: number, originalQuantity: number) => void;
   onRemove: (productId: string) => void;
-  isLoading: boolean
+  isLoading: boolean;
 }
 
+// Styled Components
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
@@ -73,10 +78,9 @@ const CartProduct: React.FC<CartItemProps> = ({
   item,
   handleUpdateQuantity,
   onRemove,
-  isLoading
+  isLoading,
 }) => {
   const theme = useTheme();
-
   return (
     <StyledCard>
       <StyledCardMedia
@@ -96,6 +100,7 @@ const CartProduct: React.FC<CartItemProps> = ({
           </Typography>
         </Box>
         <QuantityControl>
+          {/* Decrease quantity button */}
           <IconButton
             onClick={() =>
               handleUpdateQuantity(item.quantity - 1, item.quantity)
@@ -103,14 +108,17 @@ const CartProduct: React.FC<CartItemProps> = ({
             aria-label="Decrease quantity"
             size="small"
             sx={{
-              backgroundColor: theme.palette.grey[200],
+              backgroundColor: theme.palette.primary.main,
               "&:hover": {
-                backgroundColor: theme.palette.grey[300],
+                backgroundColor: theme.palette.primary.light,
               },
+              color: "#ffffff",
             }}
           >
             <Remove />
           </IconButton>
+
+          {/* Quantity display */}
           <Typography
             sx={{
               margin: "0 10px",
@@ -120,6 +128,8 @@ const CartProduct: React.FC<CartItemProps> = ({
           >
             {item.quantity}
           </Typography>
+
+          {/* Increase quantity button */}
           <IconButton
             onClick={() =>
               handleUpdateQuantity(item.quantity + 1, item.quantity)
@@ -127,15 +137,18 @@ const CartProduct: React.FC<CartItemProps> = ({
             aria-label="Increase quantity"
             size="small"
             sx={{
-              backgroundColor: theme.palette.grey[200],
+              backgroundColor: theme.palette.primary.main,
               "&:hover": {
-                backgroundColor: theme.palette.grey[300],
+                backgroundColor: theme.palette.primary.light,
               },
+              color: "#ffffff",
             }}
           >
             <Add />
           </IconButton>
         </QuantityControl>
+
+        {/* Remove button with loading state */}
         <Button
           variant="outlined"
           color="error"
@@ -145,7 +158,11 @@ const CartProduct: React.FC<CartItemProps> = ({
           aria-label={`Remove ${item.product?.name} from cart`}
           disabled={isLoading}
         >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Remove"}
+          {isLoading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Remove"
+          )}
         </Button>
       </StyledCardContent>
     </StyledCard>

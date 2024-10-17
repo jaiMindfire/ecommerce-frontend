@@ -1,4 +1,6 @@
+//React Imports
 import React, { useState } from "react";
+// 3rd Party Imports
 import {
   Box,
   Typography,
@@ -7,16 +9,17 @@ import {
   FormControlLabel,
   Select,
   MenuItem,
-  Chip,
   Grid,
   IconButton,
   Drawer,
   useMediaQuery,
   useTheme,
   SelectChangeEvent,
+  CircularProgress,
+  Card,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import StarIcon from "@mui/icons-material/Star";
@@ -25,11 +28,12 @@ import {
   setPriceRange,
   setSelectedCategory,
   setSelectedRating,
-} from "../features/products/productsSlice";
-import { RootState } from "../redux/store";
-import { useGetCategoriesQuery } from "../features/products/productsApi";
+} from "@store/redux/productsSlice";
+import { RootState } from "@store/index";
+import { useGetCategoriesQuery } from "@services/productsApi";
 
-const StyledBox = styled(Box)(({ theme }) => ({
+// Styled Components
+const StyledBox = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(3),
   borderRadius: theme.shape.borderRadius,
@@ -40,41 +44,43 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const ErrorText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.error.main,
-  marginTop: theme.spacing(1),
+export const SpinnerWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "10vh",
+  backgroundColor: theme.palette.background.default,
 }));
 
 const ShoppingFilterPage: React.FC = () => {
-  const theme = useTheme();
+  //states
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const isMobile = useMediaQuery("(max-width:1000px)");
-
   const [localPriceRange, setLocalPriceRange] = useState<number[]>([0, 1000]);
-
-  const { data: categories } = useGetCategoriesQuery();
-
+  //redux-states
   const selectedCategory = useSelector(
     (state: RootState) => state.products.selectedCategory
   );
-
   const selectedRating = useSelector(
     (state: RootState) => state.products.selectedRating
   );
-
+  //hooks
+  const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width:1000px)");
+  const { data: categories, isFetching } = useGetCategoriesQuery();
   const dispatch = useDispatch();
+  //variables
+  let debounceTimer: any;
 
-  let val: any;
-
-  //debouncing
+  // Handle price change with debouncing
   const handlePriceChange = (event: Event, newValue: number | number[]) => {
     setLocalPriceRange(newValue as number[]);
-    clearTimeout(val);
-    val = setTimeout(() => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
       dispatch(setPriceRange(newValue as number[]));
     }, 500);
   };
 
+  // Handle brand checkbox changes
   const handleBrandChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const brand = event.target.name;
     dispatch(
@@ -86,10 +92,12 @@ const ShoppingFilterPage: React.FC = () => {
     );
   };
 
+  // Handle rating selection change
   const handleRatingChange = (event: SelectChangeEvent<number>) => {
     dispatch(setSelectedRating(Number(event.target.value)));
   };
 
+  // Toggle drawer for mobile view
   const toggleDrawer =
     (open: boolean) =>
     (event: React.KeyboardEvent<Element> | React.MouseEvent<Element>) => {
@@ -102,6 +110,7 @@ const ShoppingFilterPage: React.FC = () => {
       setDrawerOpen(open);
     };
 
+  // Filter content for the drawer
   const filterContent = (
     <Box
       sx={{
@@ -136,32 +145,43 @@ const ShoppingFilterPage: React.FC = () => {
 
       <StyledBox sx={{ marginTop: 2 }}>
         <Typography variant="subtitle1" gutterBottom>
-          Brand
+          Categories
         </Typography>
-        {categories?.map((brand) => (
-          <FormControlLabel
-            key={brand}
-            control={
-              <Checkbox
-                checked={selectedCategory.includes(brand)}
-                onChange={handleBrandChange}
-                name={brand}
-              />
-            }
-            label={brand}
-          />
-        ))}
+        {
+          isFetching
+          ?
+          <SpinnerWrapper>
+            <CircularProgress/>
+          </SpinnerWrapper>
+          :
+          categories?.map((brand) => (
+            <FormControlLabel
+              key={brand}
+              control={
+                <Checkbox
+                  checked={selectedCategory.includes(brand)}
+                  onChange={handleBrandChange}
+                  name={brand}
+                  aria-label={`Select category ${brand}`}
+                />
+              }
+              label={brand}
+            />
+          ))
+        }
       </StyledBox>
 
       <StyledBox sx={{ marginTop: 2 }}>
-        <Typography variant="subtitle1" gutterBottom>
+        {/* <Typography variant="subtitle1" gutterBottom>
           Rating
-        </Typography>
+        </Typography> */}
+        <InputLabel id="rating-select-label">Rating</InputLabel>
         <Select
           value={selectedRating}
           onChange={handleRatingChange}
           fullWidth
-          aria-label="Select rating"
+          labelId="rating-select-label"
+          id="select"
         >
           <MenuItem value={0}>All Ratings</MenuItem>
           {[4, 3, 2, 1].map((rating) => (
@@ -182,6 +202,7 @@ const ShoppingFilterPage: React.FC = () => {
       }}
     >
       <Grid container spacing={2}>
+        {/* Filter section for larger screens */}
         {!isMobile && (
           <Grid item xs={12} sm={3}>
             {filterContent}
@@ -197,6 +218,7 @@ const ShoppingFilterPage: React.FC = () => {
                 marginBottom: 2,
               }}
             >
+              {/* Filter button for mobile view */}
               {isMobile && (
                 <IconButton
                   onClick={toggleDrawer(true)}
@@ -209,6 +231,8 @@ const ShoppingFilterPage: React.FC = () => {
           </Box>
         </Grid>
       </Grid>
+
+      {/* Drawer component for mobile filter options */}
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
         <Box sx={{ display: "flex", justifyContent: "flex-end", padding: 1 }}>
           <IconButton onClick={toggleDrawer(false)} aria-label="Close filter">

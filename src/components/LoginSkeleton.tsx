@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Skeleton, Typography } from "@mui/material";
+//3rd Party Imports
+import { Box, Skeleton } from "@mui/material";
 
 const SkeletonLoader = () => {
   return (
