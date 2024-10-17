@@ -45,7 +45,7 @@ const LoadingSpinner: React.FC = () => {
           size={80}
           thickness={2}
           sx={{
-            color: (theme) => theme.palette.secondary.main,
+            color: (theme) => theme.palette.primary.light,
           }}
         />
         <CartIconWrapper>
