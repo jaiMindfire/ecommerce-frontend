@@ -1,5 +1,6 @@
+"use client";
 // React Imports
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // 3rd Party Imports
 import {
   AppBar,
@@ -13,6 +14,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  CssBaseline,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -22,7 +24,6 @@ import {
   DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
 import { styled, alpha } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // Static Imports
 import { RootState } from "@store/index";
@@ -32,6 +33,9 @@ import { toggleTheme } from "@store/redux/themeSlice";
 import { usePopup } from "@store/context/LoginPopupContext";
 import LoginSignupModal from "./LoginSignupModal";
 import { APP_ICON, AVATAR_URL } from "@constants/index";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ThemeProvider } from "@mui/system";
+import setParams from "@utils/setParams";
 
 // Styled Components
 const Search = styled("div")(({ theme }) => ({
@@ -74,15 +78,21 @@ const Navbar: React.FC = () => {
   //states
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   //Redux-states
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
-
+  const theme = useSelector((state: RootState) => state.theme.theme);
   //hooks
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { isModalOpen, openModal, closeModal } = usePopup();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const isClient = typeof window !== "undefined";
 
   //Function to toggle theme between light and dark mode
   const handleToggleTheme = () => {
@@ -92,8 +102,8 @@ const Navbar: React.FC = () => {
   //Function to handle search input to search products
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      dispatch(setSearchTerm((e.target as HTMLInputElement).value));
-      navigate("/");
+      const value = (e.target as HTMLInputElement).value;
+      setParams(searchParams, value, replace, pathname, "search");
     }
   };
 
@@ -118,21 +128,26 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     handleClose();
-    navigate("/");
+    router.push("/");
     openModal();
   };
 
   // Function to handle cart click
   const handleCartClick = () => {
     if (isLoggedIn) {
-      navigate("/cart");
+      router.push("/cart");
     } else {
       openModal();
     }
   };
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <AppBar position="static" color={isDarkMode ? "default" : "primary"}>
         <Toolbar>
           <Typography
@@ -143,7 +158,7 @@ const Navbar: React.FC = () => {
               display: { xs: "none", sm: "block" },
               cursor: "pointer",
             }}
-            onClick={() => navigate("/")}
+            onClick={() => router.push("/")}
             aria-label="Home"
           >
             {APP_ICON}
@@ -172,12 +187,15 @@ const Navbar: React.FC = () => {
             />
           </label>
           <IconButton color="inherit" title="View cart" aria-label="View cart">
-            <Badge badgeContent={cartItems.length} color="error">
+            <Badge
+              badgeContent={isClient && isMounted ? cartItems?.length ?? 0 : 0}
+              color="error"
+            >
               <ShoppingCartIcon onClick={handleCartClick} />
             </Badge>
           </IconButton>
 
-          {isLoggedIn ? (
+          {isMounted && isLoggedIn ? (
             <>
               <IconButton
                 edge="end"
@@ -221,7 +239,7 @@ const Navbar: React.FC = () => {
 
       {/* Login/Signup Modal */}
       <LoginSignupModal open={isModalOpen} handleClose={closeModal} />
-    </>
+    </ThemeProvider>
   );
 };
 
