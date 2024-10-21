@@ -25,6 +25,7 @@ import useAddToCart from "../hooks/useAddToCart";
 import { usePopup } from "../store/context/LoginPopupContext";
 import { Product } from "@models/prodctsType";
 import { PRODUCT_MESSAGES } from "@constants/index";
+import { useRouter } from "next/navigation";
 
 // TypeScript interface for ProductCard props
 interface ProductCardProps {
@@ -78,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth?.token);
   //hooks
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { openModal } = usePopup();
   const {
     handleAddToCart,
@@ -92,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   //Handle product selection and navigation
   const handleProductSelect = () => {
     dispatch(setSelectedProduct(product));
-    navigate(`/products/${product._id}`);
+    router.push(`/products/${product._id}`);
   };
 
   return (
@@ -159,7 +160,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               }
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(product, navigate, isLoggedIn, openModal);
+                handleAddToCart(product, router.push, isLoggedIn, openModal);
               }}
             >
               {isInCart

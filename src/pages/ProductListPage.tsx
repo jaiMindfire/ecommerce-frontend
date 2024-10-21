@@ -1,3 +1,4 @@
+"use client";
 // React Imports
 import React, { useEffect, useState, useRef } from "react";
 // 3rd Party Imports
@@ -5,13 +6,17 @@ import { Box, Grid, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 // Static Imports
 import { RootState } from "@store/index";
-import { useGetProductsQuery } from "@services/productsApi";
 import ProductCard from "@components/ProductCard";
 import LoadingGrid from "@components/ProductLoaderSkeleton/LoadingProducts";
 import NoDataFound from "@components/NoDataFound";
 import { LIMIT, SCROLL_THRESHOLD, PRODUCT_LIST } from "@constants/index";
+import { PaginatedProductsResponse } from "@models/prodctsType";
+import setParams from "@utils/setParams";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const ProductListPage: React.FC = () => {
+const ProductListPage: React.FC<{
+  products: PaginatedProductsResponse;
+}> = ({ products }) => {
   // States
   const [page, setPage] = useState(1);
   const [productsList, setProductsList] = useState<any[]>([]);
@@ -24,20 +29,10 @@ const ProductListPage: React.FC = () => {
   );
 
   // Hooks
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const limit = LIMIT;
-  const {
-    data: products,
-    error,
-    isLoading,
-    isFetching,
-  } = useGetProductsQuery({
-    search,
-    page,
-    limit,
-    priceRange,
-    categories: selectedCategory,
-    rating: selectedRating,
-  });
 
   // Refs
   const listRef = useRef<HTMLDivElement>(null);
@@ -49,10 +44,12 @@ const ProductListPage: React.FC = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
       if (
         scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD &&
-        !isFetching &&
         hasMore
       ) {
-        setPage((prevPage) => prevPage + 1);
+        setPage((prevPage) => {
+          setParams(searchParams, prevPage + 1, replace, pathname, "page");
+          return prevPage + 1;
+        });
       }
     }
   };
@@ -102,7 +99,7 @@ const ProductListPage: React.FC = () => {
         container.removeEventListener("scroll", handleScroll);
       }
     };
-  }, [isFetching, hasMore]);
+  }, [hasMore]);
 
   return (
     <Box
@@ -127,17 +124,19 @@ const ProductListPage: React.FC = () => {
         ))}
       </Grid>
 
-      {isFetching && (
+      {/* {isFetching && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <LoadingGrid />
         </Box>
-      )}
+      )} */}
 
-      {!isFetching && productsList.length === 0 && <NoDataFound />}
+      {/* {!isFetching && productsList.length === 0 && <NoDataFound />} */}
 
-      {error && (
-        <Typography color="error">{PRODUCT_LIST.errorLoadingProducts}</Typography>
-      )}
+      {/* {error && (
+        <Typography color="error">
+          {PRODUCT_LIST.errorLoadingProducts}
+        </Typography>
+      )} */}
     </Box>
   );
 };

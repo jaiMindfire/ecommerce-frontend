@@ -14,7 +14,7 @@ import { styled } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // Static Imports
-import { useLoginMutation } from "@services/authApi";
+import { login} from "@services/authApi";
 import { setCredentials } from "@store/redux/authSlice";
 import { RootState } from "@store/index";
 import { usePopup } from "@store/context/LoginPopupContext";
@@ -24,6 +24,7 @@ import SnackbarMessage from "@components/SnackbarMessage";
 import { useSnackbar } from "@hooks/useSnackbar";
 import { getValidationSchema } from "@utils/validationSchema";
 import { LOGIN_MESSAGES, LOGIN_PAGE_IMAGE } from "@constants/index";
+import { useRouter } from "next/navigation";
 
 
 //Styled components
@@ -38,7 +39,7 @@ export const StyledPaper = styled(Paper)(({ theme }) => ({
       : "linear-gradient(145deg, #f3f4f6, #ffffff)",
   borderRadius: theme.shape.borderRadius * 2,
   boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-  color: theme.palette.text.primary,
+  color: theme.palette.text?.primary,
 }));
 
 export const BackgroundImage = styled(Box)(({ theme }) => ({
@@ -62,8 +63,7 @@ const LoginPage: React.FC = () => {
 
   // Hooks for Redux state management and routing
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [login] = useLoginMutation();
+  const router = useRouter();
   const theme = useTheme();
 
   // Check if user is already logged in
@@ -87,15 +87,15 @@ const LoginPage: React.FC = () => {
   const formSubmit = async (values: any) => {
     setLoading(true);
     try {
-      const userData = await login(values).unwrap();
+      const userData = await login(values);
       dispatch(setCredentials(userData));
       showSnackbar(LOGIN_MESSAGES.loginSuccess, "success");
       const destination = localStorage.getItem("to");
       if (destination) {
-        navigate(destination);
+        router.push(destination);
         localStorage.setItem("to", "");
       } else {
-        navigate("/");
+        router.push("/");
       }
       closeModal();
     } catch (error: any) {
@@ -108,9 +108,9 @@ const LoginPage: React.FC = () => {
   // Redirect to home if the user is already logged in
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/");
+      router.push("/");
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, router.push]);
 
   return (
     <Container component="main" maxWidth="xs">

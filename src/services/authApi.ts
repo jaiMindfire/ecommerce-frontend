@@ -1,29 +1,21 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { UserCredentials, AuthResponse } from "@models/authTypes";
-import errorHandlingMiddleware from "@middleware/errorHandlingMiddleware";
 
-// Create an API slice for authentication-related operations
-export const authApi = createApi({
-  reducerPath: "authApi", // Unique key for the slice in the Redux store
-  baseQuery: errorHandlingMiddleware(process.env.REACT_APP_API_URL), // Base URL for API requests with error handling middleware
-  endpoints: (builder) => ({
-    // login mutation
-    login: builder.mutation<AuthResponse, UserCredentials>({
-      query: (credentials) => ({
-        url: "/api/auth/login", // Endpoint for login
-        method: "POST",
-        body: credentials, // Send user credentials as the request body
-      }),
-    }),
-    // signup mutation
-    signup: builder.mutation<AuthResponse, UserCredentials>({
-      query: (credentials) => ({
-        url: "/api/auth/register", // Endpoint for signup
-        method: "POST",
-        body: credentials, // Send user credentials as the request body
-      }),
-    }),
-  }),
-});
+import axiosClient from './axiosClient';
+import { UserCredentials, AuthResponse } from '@models/authTypes';
 
-export const { useLoginMutation, useSignupMutation } = authApi;
+// Login API call
+export const login = async (credentials: UserCredentials): Promise<AuthResponse> => {
+  const { data } = await axiosClient.post<AuthResponse>('/api/auth/login', credentials);
+  // Assuming token is part of response and needs to be stored in cookies
+  // if (typeof window !== 'undefined') {
+  //   Cookies.set('authToken', data.token, { expires: 7 }); // Store token in cookies for 7 days
+  // }
+  return data;
+};
+
+// Signup API call
+export const signup = async (credentials: UserCredentials): Promise<AuthResponse> => {
+  const { data } = await axiosClient.post<AuthResponse>('/api/auth/register', credentials);
+  // Store token in cookies after successful signup
+  return data;
+};
+
