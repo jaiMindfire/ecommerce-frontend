@@ -9,7 +9,10 @@ interface CartState {
 
 // Initial state for the cart slice, loading items from local storage
 const initialState: CartState = {
-  items: JSON.parse(localStorage.getItem("cart") || "[]"),
+  items:
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("cart") || "[]")
+      : "[]",
   newItems: [],
 };
 

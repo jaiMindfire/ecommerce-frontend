@@ -9,7 +9,7 @@ interface AuthState {
 
 // Initial state for the authentication slice
 const initialState: AuthState = {
-  token: localStorage.getItem("token"), // Initialize token from local storage if it exists
+  token: typeof window !== "undefined" ? localStorage.getItem("token") : null, // Initialize token from local storage if it exists
   user: null, // Initial user state is null
 };
 
