@@ -87,13 +87,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     snackbarSeverity,
     openSnackbar,
     handleSnackbarClose,
-    isLoading,
   } = useAddToCart();
 
   //Handle product selection and navigation
   const handleProductSelect = () => {
     dispatch(setSelectedProduct(product));
-    router.push(`/products/${product._id}`);
+    router.push(`/Products/${product._id}`);
   };
 
   return (
@@ -151,16 +150,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               variant="contained"
               color="primary"
               fullWidth
-              startIcon={
-                isLoading ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  <ShoppingCartIcon />
-                )
-              }
+              // startIcon={
+              //   isLoading ? (
+              //     <CircularProgress size={24} />
+              //   ) : (
+              //     <ShoppingCartIcon />
+              //   )
+              // }
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(product, router.push, isLoggedIn, openModal);
+                handleAddToCart(product, router, isLoggedIn, openModal);
               }}
             >
               {isInCart
