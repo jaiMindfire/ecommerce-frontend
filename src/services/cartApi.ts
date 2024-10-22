@@ -1,74 +1,40 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
+import axiosClient from "./axiosClient";
 import { CartItem, CartResponse } from "@models/cartTypes";
 import { Product } from "@models/prodctsType";
-import errorHandlingMiddleware from "@middleware/errorHandlingMiddleware";
 
-// Create an API slice for cart-related operations
-export const cartApi = createApi({
-  reducerPath: "cartApi", // Unique key for the slice in the Redux store
-  baseQuery: errorHandlingMiddleware(process.env.REACT_APP_API_URL), // Base URL and error handling middleware for API requests
-  endpoints: (builder) => ({
-    // Fetch the current user's cart
-    getCart: builder.query<CartResponse, void>({
-      query: () => "/api/cart",
-    }),
+// Fetch the current user's cart
+export const getCart = async (): Promise<CartResponse> => {
+  const { data } = await axiosClient.get("/api/cart");
+  return data;
+};
 
-    // Add a product to the cart
-    addToCart: builder.mutation<
-      void,
-      { productId: string; quantity: number; product: Product }
-    >({
-      query: ({ productId, quantity }) => ({
-        url: "/api/cart",
-        method: "POST",
-        body: { productId, quantity }, // Product ID and quantity to add
-      }),
-    }),
+// Add a product to the cart
+export const addToCart = async (
+  productId: string,
+  quantity: number
+): Promise<void> => {
+  await axiosClient.post("/api/cart", { productId, quantity });
+};
 
-    // Update the quantity of an existing cart item
-    updateCartItem: builder.mutation<
-      void,
-      { productId: string; quantity: number }
-    >({
-      query: ({ productId, quantity }) => ({
-        url: `/api/cart/`,
-        method: "PUT",
-        body: { productId, quantity }, // Updated product ID and quantity
-      }),
-    }),
+// Update the quantity of an existing cart item
+export const updateCartItem = async (
+  productId: string,
+  quantity: number
+): Promise<void> => {
+  await axiosClient.put(`/api/cart`, { productId, quantity });
+};
 
-    // Remove a product from the cart
-    removeFromCart: builder.mutation<void, { productId: string }>({
-      query: ({ productId }) => ({
-        url: `/api/cart/${productId}`,
-        method: "DELETE",
-      }),
-    }),
+// Remove a product from the cart
+export const removeFromCart = async (productId: string): Promise<void> => {
+  await axiosClient.delete(`/api/cart/${productId}`);
+};
 
-    // Add multiple items to the cart in one request
-    massAddToCart: builder.mutation<void, CartItem[]>({
-      query: (items) => ({
-        url: "/api/cart/mass-add",
-        method: "POST",
-        body: { items }, // Array of cart items to add
-      }),
-    }),
+// Add multiple items to the cart in one request
+export const massAddToCart = async (items: CartItem[]): Promise<void> => {
+  await axiosClient.post("/api/cart/mass-add", { items });
+};
 
-    // Checkout the current cart
-    checkout: builder.mutation<void, void>({
-      query: () => ({
-        url: "/api/cart/checkout",
-        method: "POST",
-      }),
-    }),
-  }),
-});
-
-export const {
-  useGetCartQuery,
-  useAddToCartMutation,
-  useUpdateCartItemMutation,
-  useRemoveFromCartMutation,
-  useMassAddToCartMutation,
-  useCheckoutMutation,
-} = cartApi;
+// Checkout the current cart
+export const checkout = async (): Promise<void> => {
+  await axiosClient.post("/api/cart/checkout");
+};

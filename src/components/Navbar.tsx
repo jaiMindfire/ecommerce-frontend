@@ -142,7 +142,7 @@ const Navbar: React.FC = () => {
   // Function to handle cart click
   const handleCartClick = () => {
     if (isLoggedIn) {
-      router.push("/cart");
+      router.push("/Cart");
     } else {
       openModal();
     }

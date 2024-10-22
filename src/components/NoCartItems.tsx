@@ -4,8 +4,8 @@ import React from "react";
 import { Button, Container, Grid, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 import { ShoppingCart } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import { EMPTY_CART_SUBTITLE, EMPTY_CART_TITLE } from "@constants/index";
+import { useRouter } from "next/navigation";
 
 // Styled Components
 const StyledContainer = styled(Container)(({ theme }) => ({
@@ -35,7 +35,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 const NoItemsInCart: React.FC = () => {
   //hooks
   const theme = useTheme();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <StyledContainer maxWidth="sm">
@@ -59,7 +59,7 @@ const NoItemsInCart: React.FC = () => {
             color="primary"
             size="large"
             aria-label="Start shopping"
-            onClick={() => navigate("/")}
+            onClick={() => router.push("/")}
           >
             Shop Now
           </StyledButton>

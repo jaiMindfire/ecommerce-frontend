@@ -4,14 +4,15 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
 //Static Imports
-import {
-  useUpdateCartItemMutation,
-  useRemoveFromCartMutation,
-} from "@services/cartApi";
+// import {
+//   useUpdateCartItemMutation,
+//   useRemoveFromCartMutation,
+// } from "@services/cartApi";
 import { removeItemFromCart, updateItemQuantity } from "@store/redux/cartSlice";
 import CartProduct from "@components/CartProduct";
 import { CartItem } from "@models/cartTypes";
 import { RootState } from "@store/index";
+import { removeFromCart, updateCartItem } from "@services/cartApi";
 
 interface CartProductListProps {
   showSnackbar: (message: string, type: "success" | "error") => void;
@@ -24,14 +25,13 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
   const items = useSelector((state: RootState) => state.cart.items);
   //hooks
   const dispatch = useDispatch();
-  const [updateCartItem] = useUpdateCartItemMutation();
-  const [removeFromCart] = useRemoveFromCartMutation();
+  // const [updateCartItem] = useUpdateCartItemMutation();
+  // const [removeFromCart] = useRemoveFromCartMutation();
 
   // Function to handle item removal from the cart
   const handleRemoveItem = (productId: string) => {
     setLoadingItemId(productId);
-    removeFromCart({ productId })
-      .unwrap()
+    removeFromCart(productId)
       .then(() => {
         dispatch(removeItemFromCart(productId)); //Remove item from cart action
         showSnackbar("Item removed successfully!", "success");
@@ -51,8 +51,7 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
     originalQuantity: number
   ) => {
     dispatch(updateItemQuantity({ productId, quantity })); //Update current cart item's quantity action.
-    updateCartItem({ productId, quantity })
-      .unwrap()
+    updateCartItem(productId, quantity)
       .then(() => {
         showSnackbar("Quantity updated successfully!", "success");
       })

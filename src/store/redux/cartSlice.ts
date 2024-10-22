@@ -12,7 +12,7 @@ const initialState: CartState = {
   items:
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("cart") || "[]")
-      : "[]",
+      : [],
   newItems: [],
 };
 

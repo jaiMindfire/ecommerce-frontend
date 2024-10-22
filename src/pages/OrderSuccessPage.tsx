@@ -3,8 +3,8 @@ import React, { useState } from "react";
 // 3rd Party Imports
 import { CheckCircle, Close } from "@mui/icons-material";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { CHECKOUT_MESSAGES } from "@constants/index";
+import { useRouter } from "next/navigation";
 
 
 // Component Props Interface
@@ -21,7 +21,7 @@ const OrderSuccessNotification: React.FC<OrderSuccessNotificationProps> = ({
   // State to manage visibility of the notification
   const [isVisible, setIsVisible] = useState(true);
   const theme = useTheme();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Handler to dismiss the notification
   const handleDismiss = () => {
@@ -108,7 +108,7 @@ const OrderSuccessNotification: React.FC<OrderSuccessNotificationProps> = ({
           variant="contained"
           color="success"
           onClick={() => {
-            navigate("/");
+            router.push("/");
           }}
         >
           {CHECKOUT_MESSAGES.continueShopping}

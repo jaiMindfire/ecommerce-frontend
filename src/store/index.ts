@@ -3,7 +3,6 @@ import authReducer from "./redux/authSlice";
 import productsReducer from "./redux/productsSlice";
 import cartReducer from "./redux/cartSlice";
 import themeReducer from "@store/redux/themeSlice";
-import { cartApi } from "@services/cartApi";
 
 export const makeStore = () => {
   return configureStore({
@@ -12,12 +11,10 @@ export const makeStore = () => {
       products: productsReducer,
       cart: cartReducer,
       theme: themeReducer,
-      [cartApi.reducerPath]: cartApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
         // authApi.middleware,
-        cartApi.middleware
       ),
   });
 };
