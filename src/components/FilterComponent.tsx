@@ -1,5 +1,6 @@
+"use client";
 //React Imports
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // 3rd Party Imports
 import {
   Box,
@@ -19,7 +20,7 @@ import {
   Card,
   InputLabel,
 } from "@mui/material";
-import { styled } from "@mui/system";
+import { styled, ThemeProvider } from "@mui/system";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import StarIcon from "@mui/icons-material/Star";
@@ -30,7 +31,9 @@ import {
   setSelectedRating,
 } from "@store/redux/productsSlice";
 import { RootState } from "@store/index";
-import { useGetCategoriesQuery } from "@services/productsApi";
+import { getCategories } from "@services/productsApi";
+import setParams from "@utils/setParams";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 // Styled Components
 const StyledBox = styled(Card)(({ theme }) => ({
@@ -56,6 +59,9 @@ const ShoppingFilterPage: React.FC = () => {
   //states
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [localPriceRange, setLocalPriceRange] = useState<number[]>([0, 1000]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   //redux-states
   const selectedCategory = useSelector(
     (state: RootState) => state.products.selectedCategory
@@ -63,11 +69,13 @@ const ShoppingFilterPage: React.FC = () => {
   const selectedRating = useSelector(
     (state: RootState) => state.products.selectedRating
   );
+  const theme = useSelector((state: RootState) => state.theme.theme);
   //hooks
-  const theme = useTheme();
   const isMobile = useMediaQuery("(max-width:1000px)");
-  const { data: categories, isFetching } = useGetCategoriesQuery();
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   //variables
   let debounceTimer: any;
 
@@ -76,24 +84,38 @@ const ShoppingFilterPage: React.FC = () => {
     setLocalPriceRange(newValue as number[]);
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
-      dispatch(setPriceRange(newValue as number[]));
+      setParams(
+        searchParams,
+        newValue as number[],
+        replace,
+        pathname,
+        "priceRange"
+      );
     }, 500);
   };
 
   // Handle brand checkbox changes
   const handleBrandChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const brand = event.target.name;
-    dispatch(
-      setSelectedCategory(
-        selectedCategory.includes(brand)
-          ? selectedCategory.filter((b) => b !== brand)
-          : [...selectedCategory, brand]
-      )
-    );
+    setSelectedCategories((prev) => {
+      const curr = prev.includes(brand)
+        ? prev.filter((b) => b !== brand)
+        : [...prev, brand];
+      setParams(searchParams, curr, replace, pathname, "categories");
+      return curr;
+    });
   };
 
   // Handle rating selection change
   const handleRatingChange = (event: SelectChangeEvent<number>) => {
+    console.log(event.target.value);
+    setParams(
+      searchParams,
+      Number(event.target.value),
+      replace,
+      pathname,
+      "rating"
+    );
     dispatch(setSelectedRating(Number(event.target.value)));
   };
 
@@ -109,6 +131,22 @@ const ShoppingFilterPage: React.FC = () => {
       }
       setDrawerOpen(open);
     };
+
+  const fetchCategories = async () => {
+    setIsFetching(true);
+    try {
+      const data = await getCategories();
+      setCategories(data);
+      setIsFetching(false);
+    } catch {
+      console.log("error");
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // Filter content for the drawer
   const filterContent = (
@@ -147,19 +185,17 @@ const ShoppingFilterPage: React.FC = () => {
         <Typography variant="subtitle1" gutterBottom>
           Categories
         </Typography>
-        {
-          isFetching
-          ?
+        {isFetching ? (
           <SpinnerWrapper>
-            <CircularProgress/>
+            <CircularProgress />
           </SpinnerWrapper>
-          :
+        ) : (
           categories?.map((brand) => (
             <FormControlLabel
               key={brand}
               control={
                 <Checkbox
-                  checked={selectedCategory.includes(brand)}
+                  checked={selectedCategories.includes(brand)}
                   onChange={handleBrandChange}
                   name={brand}
                   aria-label={`Select category ${brand}`}
@@ -168,7 +204,7 @@ const ShoppingFilterPage: React.FC = () => {
               label={brand}
             />
           ))
-        }
+        )}
       </StyledBox>
 
       <StyledBox sx={{ marginTop: 2 }}>
@@ -195,53 +231,55 @@ const ShoppingFilterPage: React.FC = () => {
   );
 
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-      }}
-    >
-      <Grid container spacing={2}>
-        {/* Filter section for larger screens */}
-        {!isMobile && (
-          <Grid item xs={12} sm={3}>
-            {filterContent}
-          </Grid>
-        )}
-        <Grid item xs={12} sm={isMobile ? 12 : 9}>
-          <Box sx={{ padding: 2 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 2,
-              }}
-            >
-              {/* Filter button for mobile view */}
-              {isMobile && (
-                <IconButton
-                  onClick={toggleDrawer(true)}
-                  aria-label="Open filter"
-                >
-                  <FilterListIcon />
-                </IconButton>
-              )}
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Grid container spacing={2}>
+          {/* Filter section for larger screens */}
+          {!isMobile && (
+            <Grid item xs={12} sm={3}>
+              {filterContent}
+            </Grid>
+          )}
+          <Grid item xs={12} sm={isMobile ? 12 : 9}>
+            <Box sx={{ padding: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 2,
+                }}
+              >
+                {/* Filter button for mobile view */}
+                {isMobile && (
+                  <IconButton
+                    onClick={toggleDrawer(true)}
+                    aria-label="Open filter"
+                  >
+                    <FilterListIcon />
+                  </IconButton>
+                )}
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
 
-      {/* Drawer component for mobile filter options */}
-      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", padding: 1 }}>
-          <IconButton onClick={toggleDrawer(false)} aria-label="Close filter">
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        {filterContent}
-      </Drawer>
-    </Box>
+        {/* Drawer component for mobile filter options */}
+        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", padding: 1 }}>
+            <IconButton onClick={toggleDrawer(false)} aria-label="Close filter">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          {filterContent}
+        </Drawer>
+      </Box>
+    </ThemeProvider>
   );
 };
 
