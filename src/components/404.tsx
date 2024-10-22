@@ -2,7 +2,7 @@
 import { Typography, Button, Container, Grid } from "@mui/material";
 import { ErrorOutline } from "@mui/icons-material";
 import { styled } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 //styles using styled-component
 const StyledContainer = styled(Container)(({ theme }) => ({
@@ -31,7 +31,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const NotFound404 = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <StyledContainer maxWidth="md">
       <Grid container spacing={3} justifyContent="center" alignItems="center">
@@ -52,7 +52,7 @@ const NotFound404 = () => {
             size="large"
             aria-label="Go back to homepage"
             onClick={() => {
-              navigate("/");
+              router.push("/");
             }}
           >
             Back to Home

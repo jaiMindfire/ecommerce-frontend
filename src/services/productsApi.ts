@@ -20,19 +20,18 @@ export const getProducts = async ({
   rating?: number; // Optional rating for filtering
   sizes?: string[]; // Optional sizes for filtering
 }): Promise<PaginatedProductsResponse> => {
-  console.log(search, page, 'pagee')
+  console.log(rating, categories,  'pagee')
   const { data } = await axiosClient.get("/api/products", {
     params: {
       search,
       page,
       limit,
-      priceRange: priceRange?.join(","),
-      categories: categories?.join(","),
+      priceRange: priceRange,
+      categories: categories,
       rating,
       sizes: sizes?.join(","),
     },
   });
-  console.log(data)
   return data;
 };
 

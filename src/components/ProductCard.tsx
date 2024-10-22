@@ -19,13 +19,13 @@ import {
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedProduct } from "../store/redux/productsSlice";
-import { useNavigate } from "react-router-dom";
 import { RootState } from "@store/index";
 import useAddToCart from "../hooks/useAddToCart";
 import { usePopup } from "../store/context/LoginPopupContext";
 import { Product } from "@models/prodctsType";
 import { PRODUCT_MESSAGES } from "@constants/index";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // TypeScript interface for ProductCard props
 interface ProductCardProps {
@@ -48,10 +48,12 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const StyledCardMedia = styled(CardMedia)({
+const StyledImageWrapper = styled("div")({
+  position: "relative",
   paddingTop: "56.25%",
   borderRadius: 8,
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+  overflow: "hidden",
 });
 
 const AddToCartButton = styled(Button)(({ theme }) => ({
@@ -99,7 +101,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <>
       <StyledCard onClick={handleProductSelect}>
         <Box position="relative">
-          <StyledCardMedia image={product.imageUrl} title={product.name} />
+          <StyledImageWrapper>
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              layout="fill" // Fills the parent div
+              objectFit="cover" // Makes sure the image behaves like background-size: cover
+              quality={100} // Set image quality if needed (optional)
+            />
+          </StyledImageWrapper>
           <Chip
             label={
               (product?.stock || 0) > 0

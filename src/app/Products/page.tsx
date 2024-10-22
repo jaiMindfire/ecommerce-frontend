@@ -12,12 +12,18 @@ export default async function Page({
     search?: string;
     page?: number;
     limit?: number;
+    priceRange?: number[];
+    categories?: string[];
+    rating?: number
   };
 }) {
+  console.log(searchParams, 'paramsss')
   const search = searchParams?.search || "";
   const page = Number(searchParams?.page) || 1;
   const limit = Number(searchParams?.limit) || 8;
-
+  const priceRange = searchParams?.priceRange || [];
+  const categories = searchParams?.categories || [];
+  const rating = Number(searchParams?.rating) || 0
   let products;
 
   try {
@@ -26,6 +32,9 @@ export default async function Page({
       search,
       page,
       limit,
+      priceRange,
+      categories,
+      rating
     });
   } catch (error) {
     console.error("Error fetching products:", error);

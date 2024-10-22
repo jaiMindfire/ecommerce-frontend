@@ -20,11 +20,10 @@ axiosClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${cookieHeader}`;
       }
     } else {
-      // Client-side cookie handling
-      // const token = Cookies.get("authToken"); // Assumes 'authToken' is stored in cookies
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`;
-      // }
+      const token = localStorage.getItem('token') // Assumes 'authToken' is stored in cookies
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
     return config;

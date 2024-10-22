@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 //Static Imports
 import { addItemToCart, removeItemFromCart } from "@store/redux/cartSlice";
-import { useAddToCartMutation } from "@services/cartApi";
 import { RootState } from "@store/index";
+import { addToCart } from "@services/cartApi";
 
 const useAddToCart = () => {
   //state
@@ -19,12 +19,12 @@ const useAddToCart = () => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth?.token);
   //hooks
   const dispatch = useDispatch();
-  const [addToCartMutation, { isLoading }] = useAddToCartMutation();
+  // const [addToCartMutation, { isLoading }] = useAddToCartMutation();
 
   //Function to handle adding a product to the cart
   const handleAddToCart = (
     product: any,
-    navigate: any,
+    router: any,
     isLoggedIn: boolean,
     openPopup: any
   ) => {
@@ -40,20 +40,16 @@ const useAddToCart = () => {
     if (isInCart) {
       //Navigate to the cart if logged in, otherwise open login popup
       if (isLoggedIn) {
-        navigate("/cart");
+        router.push("/Cart");
       } else {
         openPopup();
         localStorage.setItem("to", "/cart"); //Save redirection path to local storage
       }
     } else {
       //If not in cart, make an API call to add the product
-
-      addToCartMutation({
-        productId: product._id,
-        quantity: 1,
-        product,
-      })
-        .unwrap()
+      const productId = product._id;
+      const quantity = 1;
+      addToCart(productId, quantity)
         .then(() => {
           setSnackbarMessage("Added to cart!");
           setSnackbarSeverity("success");
@@ -88,7 +84,7 @@ const useAddToCart = () => {
 
   return {
     handleAddToCart,
-    isLoading,
+    // isLoading,
     snackbarMessage,
     snackbarSeverity,
     openSnackbar,
