@@ -1,3 +1,4 @@
+"use client";
 //3rd Party Imports
 import { Box, Typography, Paper, IconButton } from "@mui/material";
 import { styled } from "@mui/system";
@@ -5,7 +6,7 @@ import { Search } from "@mui/icons-material";
 
 //Styled Components
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: theme.palette.background?.paper,
   padding: theme.spacing(4),
   display: "flex",
   flexDirection: "column",
@@ -16,7 +17,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   transition: "all 0.3s ease-in-out",
   "&:hover": {
     transform: "scale(1.02)",
-  }
+  },
 }));
 
 const AnimatedTypography = styled(Typography)({
@@ -24,13 +25,13 @@ const AnimatedTypography = styled(Typography)({
   "@keyframes fadeIn": {
     "0%": {
       opacity: 0,
-      transform: "translateY(-20px)"
+      transform: "translateY(-20px)",
     },
     "100%": {
       opacity: 1,
-      transform: "translateY(0)"
-    }
-  }
+      transform: "translateY(0)",
+    },
+  },
 });
 
 const NoDataFound = () => {
@@ -41,7 +42,7 @@ const NoDataFound = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        bgcolor: "background.default"
+        bgcolor: "background.default",
       }}
     >
       <StyledPaper elevation={3}>
@@ -49,7 +50,7 @@ const NoDataFound = () => {
           aria-label="No data found icon"
           sx={{ mb: 2, fontSize: "3rem", color: "text.secondary" }}
         >
-          <Search style={{fontSize: '60px'}} />
+          <Search style={{ fontSize: "60px" }} />
         </IconButton>
         <AnimatedTypography
           variant="h4"
@@ -65,7 +66,8 @@ const NoDataFound = () => {
           align="center"
           sx={{ mt: 2, maxWidth: "80%" }}
         >
-          We couldn't find any data matching your request. Please try again or adjust your search criteria.
+          We couldn't find any data matching your request. Please try again or
+          adjust your search criteria.
         </Typography>
       </StyledPaper>
     </Box>

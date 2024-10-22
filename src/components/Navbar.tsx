@@ -25,6 +25,9 @@ import {
 } from "@mui/icons-material";
 import { styled, alpha } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ThemeProvider } from "@mui/system";
+import setParams from "@utils/setParams";
 // Static Imports
 import { RootState } from "@store/index";
 import { logout } from "@store/redux/authSlice";
@@ -33,9 +36,6 @@ import { toggleTheme } from "@store/redux/themeSlice";
 import { usePopup } from "@store/context/LoginPopupContext";
 import LoginSignupModal from "./LoginSignupModal";
 import { APP_ICON, AVATAR_URL } from "@constants/index";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ThemeProvider } from "@mui/system";
-import setParams from "@utils/setParams";
 
 // Styled Components
 const Search = styled("div")(({ theme }) => ({
@@ -103,14 +103,21 @@ const Navbar: React.FC = () => {
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const value = (e.target as HTMLInputElement).value;
-      setParams(searchParams, value, replace, pathname, "search");
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      if (value) {
+        params.set("search", value);
+      } else {
+        params.delete("search");
+      }
+      replace(`${pathname}?${params.toString()}`);
     }
   };
 
   //Function to clear search term if input is empty
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "") {
-      dispatch(setSearchTerm(e.target.value));
+      setParams(searchParams, "", replace, pathname, "search");
     }
   };
 

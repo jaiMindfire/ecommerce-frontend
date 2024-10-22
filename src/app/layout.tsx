@@ -1,5 +1,9 @@
+// Next Imports
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+//3rd Party Imports
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+// Static Imports
 import Navbar from "@components/Navbar";
 import StoreProvider from "@store/StoreProvider";
 import { PopupProvider } from "@store/context/LoginPopupContext";
@@ -30,8 +34,10 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <StoreProvider>
           <PopupProvider>
-            <Navbar />
-            {children}
+            <AppRouterCacheProvider>
+              <Navbar />
+              {children}
+            </AppRouterCacheProvider>
           </PopupProvider>
         </StoreProvider>
       </body>
