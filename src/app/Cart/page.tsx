@@ -15,9 +15,5 @@ export default async function Page() {
     console.error("Error fetching products:", error);
   }
 
-  return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <CartPage cartItems={cartItems} />
-    </Suspense>
-  );
+  return <CartPage cartItems={cartItems} />;
 }

@@ -41,7 +41,7 @@ export default async function Page({
   }
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense>
       <ProductListPage products={products} />
     </Suspense>
   );

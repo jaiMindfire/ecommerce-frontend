@@ -92,7 +92,7 @@ const ProductDetailPage = ({ product }: { product: Product | undefined }) => {
   //   return <Typography variant="h6">{PRODUCT_MESSAGES.error.loadProduct}</Typography>;
   // }
   if(!product){
-    return
+    return null
   }
 
   return (
