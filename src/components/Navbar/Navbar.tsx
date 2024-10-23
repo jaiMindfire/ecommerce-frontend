@@ -103,14 +103,7 @@ const Navbar: React.FC = () => {
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const value = (e.target as HTMLInputElement).value;
-      const params = new URLSearchParams(searchParams);
-      params.set("page", "1");
-      if (value) {
-        params.set("search", value);
-      } else {
-        params.delete("search");
-      }
-      replace(`${pathname}?${params.toString()}`);
+      setParams(searchParams, value, replace, pathname, "search")
     }
   };
 
