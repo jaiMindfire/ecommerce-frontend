@@ -13,7 +13,7 @@ const SpinnerWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  height: "100vh",
+  height: "90vh",
   backgroundColor: theme.palette.background.default,
 }));
 

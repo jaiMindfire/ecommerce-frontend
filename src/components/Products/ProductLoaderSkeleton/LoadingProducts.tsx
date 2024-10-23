@@ -1,3 +1,4 @@
+"use client"
 //3rd party imports
 import { Grid } from "@mui/material";
 //static imports
