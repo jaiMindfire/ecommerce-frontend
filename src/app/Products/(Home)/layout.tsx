@@ -1,18 +1,12 @@
 // Next Imports
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-//3rd Party Imports
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 // Static Imports
-import Navbar from "@components/Navbar/Navbar";
-import StoreProvider from "@store/StoreProvider";
-import { PopupProvider } from "@store/context/LoginPopupContext";
 import ShoppingFilterPage from "@components/Shared/FilterComponent";
-import { Box, CssBaseline } from "@mui/material";
+import { Box } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Ecommerce App",
-  description: "An easy online shopping solution",
+  title: "Products",
+  description: "An ",
 };
 
 export default function RootLayout({

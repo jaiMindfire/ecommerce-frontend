@@ -1,11 +1,17 @@
 // React imports
 import { Suspense } from "react";
+// Next imports
+import { Metadata } from "next";
 // Static Imports
 import LoadingSpinner from "@components/Shared/LoadingSpinner";
-import ProductListPage from "@components/Products/Products";
-import { getProductById, getProducts } from "@services/productsApi";
+import { getProductById } from "@services/productsApi";
 import ProductDetailPage from "@components/Products/ProductDetail";
 import { Product } from "@models/prodctsType";
+
+export const metadata: Metadata = {
+  title: "Products Detail",
+  description: "Products detail page",
+};
 
 export default async function Page({ params }: { params: { id: string } }) {
   const productId = params.id;
