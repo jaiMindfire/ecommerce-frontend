@@ -8,7 +8,7 @@ import { removeItemFromCart, updateItemQuantity } from "@store/redux/cartSlice";
 import CartProduct from "@components/Cart/CartProduct";
 import { CartItem } from "@models/cartTypes";
 import { RootState } from "@store/index";
-import { removeFromCart, updateCartItem } from "@services/cartApi";
+import { useRemoveFromCart, useUpdateCartItem } from "@services/cartApi";
 
 interface CartProductListProps {
   showSnackbar: (message: string, type: "success" | "error") => void;
@@ -21,7 +21,8 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
   const items = useSelector((state: RootState) => state.cart.items);
   //hooks
   const dispatch = useDispatch();
-
+  const { removeFromCart, loading, error } = useRemoveFromCart();
+  const { updateCartItem, loading: updateLoading, error: updateError } = useUpdateCartItem();
   // Function to handle item removal from the cart
   const handleRemoveItem = (productId: string) => {
     setLoadingItemId(productId);
@@ -30,8 +31,8 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
         dispatch(removeItemFromCart(productId)); //Remove item from cart action
         showSnackbar("Item removed successfully!", "success");
       })
-      .catch((error) => {
-        showSnackbar(error.data, "error");
+      .catch((error: any) => {
+        showSnackbar(error?.response?.data?.message, "error");
       })
       .finally(() => {
         setLoadingItemId(null);
@@ -51,7 +52,7 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
       })
       .catch((e) => {
         dispatch(updateItemQuantity({ productId, quantity: originalQuantity }));
-        showSnackbar(e.data.message, "error");
+        showSnackbar(e?.response?.data?.message, "error");
       });
   };
 

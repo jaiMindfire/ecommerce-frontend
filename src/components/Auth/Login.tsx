@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
       }
       closeModal();
     } catch (error: any) {
-      showSnackbar(error.data.message, "error");
+      showSnackbar(error?.response?.data?.message, "error");
     } finally {
       setLoading(false);
     }

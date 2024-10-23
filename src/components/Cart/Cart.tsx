@@ -20,7 +20,7 @@ import { handleMergeLocalCart } from "@utils/cartUtils";
 import OrderSuccessNotification from "@components/Order/OrderSuccessNotification";
 import { useSnackbar } from "@hooks/useSnackbar";
 import { ThemeProvider } from "@mui/system";
-import { checkout, massAddToCart } from "@services/cartApi";
+import { useCheckout, useMassAddToCart } from "@services/cartApi";
 import { CartResponse } from "@models/cartTypes";
 
 const CartPage: React.FC<{
@@ -35,7 +35,8 @@ const CartPage: React.FC<{
   //hooks
   const dispatch = useDispatch();
   const { open, message, severity, showSnackbar, handleClose } = useSnackbar();
-
+  const { massAddToCart, loading: massLoading, error: massError } = useMassAddToCart();
+  const { checkout, loading, error } = useCheckout();
   // Function to handle the checkout process
   const handleCheckout = async () => {
     const totalAmount = items.reduce(
@@ -68,7 +69,7 @@ const CartPage: React.FC<{
   useEffect(() => {
     dispatch(mergeLocalCart(cartItems?.items || []));
     handleMergeLocalCart(cartItems, massAddToCart);
-  }, [cartItems, isLoggedIn, dispatch, massAddToCart]);
+  }, [cartItems]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -84,7 +85,7 @@ const CartPage: React.FC<{
             <CartProductList showSnackbar={showSnackbar} />
             <OrderSummary
               items={items}
-              isCheckoutLoading={false}
+              isCheckoutLoading={loading}
               handleCheckout={handleCheckout}
             />
           </>

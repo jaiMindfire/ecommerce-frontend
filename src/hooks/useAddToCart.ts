@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 //Static Imports
 import { addItemToCart, removeItemFromCart } from "@store/redux/cartSlice";
 import { RootState } from "@store/index";
-import { addToCart } from "@services/cartApi";
+import { useAddCart } from "@services/cartApi";
+import useAxiosMutation from "./useAxiosMutation";
 
 const useAddToCart = () => {
   //state
@@ -19,6 +20,7 @@ const useAddToCart = () => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth?.token);
   //hooks
   const dispatch = useDispatch();
+  const { addToCart, loading, error } = useAddCart();
   // const [addToCartMutation, { isLoading }] = useAddToCartMutation();
 
   //Function to handle adding a product to the cart
@@ -84,7 +86,7 @@ const useAddToCart = () => {
 
   return {
     handleAddToCart,
-    // isLoading,
+    loading,
     snackbarMessage,
     snackbarSeverity,
     openSnackbar,
