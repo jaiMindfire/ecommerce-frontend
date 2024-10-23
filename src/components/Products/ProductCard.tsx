@@ -11,12 +11,10 @@ import {
   Box,
   Tooltip,
   Chip,
-  CircularProgress,
   Snackbar,
   Alert,
   Rating,
 } from "@mui/material";
-import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedProduct } from "@store/redux/productsSlice";
 import { RootState } from "@store/index";

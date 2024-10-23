@@ -1,5 +1,7 @@
 // React Imports
 import React, { useEffect, useState } from "react";
+// Next Imports
+import { useRouter } from "next/navigation";
 // 3rd Party Imports
 import { useFormik } from "formik";
 import {
@@ -24,7 +26,6 @@ import SnackbarMessage from "@components/Shared/SnackbarMessage";
 import { useSnackbar } from "@hooks/useSnackbar";
 import { getValidationSchema } from "@utils/validationSchema";
 import { LOGIN_MESSAGES, LOGIN_PAGE_IMAGE } from "@constants/index";
-import { useRouter } from "next/navigation";
 
 
 //Styled components

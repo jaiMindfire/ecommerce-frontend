@@ -4,10 +4,6 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
 //Static Imports
-// import {
-//   useUpdateCartItemMutation,
-//   useRemoveFromCartMutation,
-// } from "@services/cartApi";
 import { removeItemFromCart, updateItemQuantity } from "@store/redux/cartSlice";
 import CartProduct from "@components/Cart/CartProduct";
 import { CartItem } from "@models/cartTypes";
@@ -25,8 +21,6 @@ const CartProductList: React.FC<CartProductListProps> = ({ showSnackbar }) => {
   const items = useSelector((state: RootState) => state.cart.items);
   //hooks
   const dispatch = useDispatch();
-  // const [updateCartItem] = useUpdateCartItemMutation();
-  // const [removeFromCart] = useRemoveFromCartMutation();
 
   // Function to handle item removal from the cart
   const handleRemoveItem = (productId: string) => {

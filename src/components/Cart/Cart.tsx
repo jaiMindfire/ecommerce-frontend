@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 //3rd Party Imports
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Grid, CircularProgress } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 //Static Imports
 import { RootState } from "@store/index";
 import {
@@ -19,10 +19,9 @@ import { setCheckedOut } from "@store/redux/productsSlice";
 import { handleMergeLocalCart } from "@utils/cartUtils";
 import OrderSuccessNotification from "@components/Order/OrderSuccessNotification";
 import { useSnackbar } from "@hooks/useSnackbar";
-import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import { ThemeProvider } from "@mui/system";
 import { checkout, massAddToCart } from "@services/cartApi";
-import { CartItem, CartResponse } from "@models/cartTypes";
+import { CartResponse } from "@models/cartTypes";
 
 const CartPage: React.FC<{
   cartItems: CartResponse | undefined;
@@ -35,11 +34,6 @@ const CartPage: React.FC<{
   const theme = useSelector((state: RootState) => state.theme.theme);
   //hooks
   const dispatch = useDispatch();
-  // const { data: cartItems, isLoading } = useGetCartQuery(undefined, {
-  //   skip: !isLoggedIn,
-  // });
-  // const [massAddToCart] = useMassAddToCartMutation();
-  // const [checkout, { isLoading: isCheckoutLoading }] = useCheckoutMutation();
   const { open, message, severity, showSnackbar, handleClose } = useSnackbar();
 
   // Function to handle the checkout process
@@ -75,10 +69,6 @@ const CartPage: React.FC<{
     dispatch(mergeLocalCart(cartItems?.items || []));
     handleMergeLocalCart(cartItems, massAddToCart);
   }, [cartItems, isLoggedIn, dispatch, massAddToCart]);
-
-  // if (isLoading) {
-  //   return <LoadingSpinner/>;
-  // }
 
   return (
     <ThemeProvider theme={theme}>

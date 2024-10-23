@@ -6,7 +6,7 @@ import { Dialog, DialogContent, Tabs, Tab, Box } from "@mui/material";
 import SkeletonLoader from "./LoginSkeleton";
 // Lazy-loaded components
 const LoginPage = lazy(() => import("@components/Auth/Login"));
-const SignupPage = lazy(() => import("@components/Auth/Signiup"));
+const SignupPage = lazy(() => import("@components/Auth/Signup"));
 
 // Props interface for LoginSignupModal
 interface LoginSignupModalProps {

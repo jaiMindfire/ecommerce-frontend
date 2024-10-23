@@ -27,15 +27,14 @@ import { styled, alpha } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ThemeProvider } from "@mui/system";
-import setParams from "@utils/setParams";
 // Static Imports
 import { RootState } from "@store/index";
 import { logout } from "@store/redux/authSlice";
-import { setSearchTerm } from "@store/redux/productsSlice";
 import { toggleTheme } from "@store/redux/themeSlice";
 import { usePopup } from "@store/context/LoginPopupContext";
 import LoginSignupModal from "@components/Auth/LoginSignupModal";
 import { APP_ICON, AVATAR_URL } from "@constants/index";
+import setParams from "@utils/setParams";
 
 // Styled Components
 const Search = styled("div")(({ theme }) => ({

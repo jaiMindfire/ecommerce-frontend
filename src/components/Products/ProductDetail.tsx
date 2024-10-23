@@ -6,29 +6,24 @@ import {
   Typography,
   Grid,
   Card,
-  CardMedia,
   Chip,
   Button,
   styled,
-  CircularProgress,
   Snackbar,
   Alert,
 } from "@mui/material";
 // 3rd Party Imports
-import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { ThemeProvider } from "@mui/system";
+import Image from "next/image";
 // Static Imports
 import { RootState } from "@store/index";
 import { setCheckedOut } from "@store/redux/productsSlice";
 import useAddToCart from "@hooks/useAddToCart";
 import { usePopup } from "@store/context/LoginPopupContext";
 import { PRODUCT_MESSAGES } from "@constants/index";
-import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import { Product } from "@models/prodctsType";
 import { useRouter } from "next/navigation";
-import { ThemeProvider } from "@mui/system";
-import Image from "next/image";
 
 const ProductImageWrapper = styled("div")(({ theme }) => ({
   position: "relative",
@@ -92,12 +87,6 @@ const ProductDetailPage = ({ product }: { product: Product | undefined }) => {
       dispatch(setCheckedOut(newItems)); // Update checked out items
     }
   }, [isInCheckoutItems, checkedOutItems, product?._id, dispatch]);
-
-  // Loading state
-  // if (isLoadingProduct) {
-  //   return <LoadingSpinner/>; // Show loading spinner
-  // }
-
   // Error handling
   // if (error) {
   //   return <Typography variant="h6">{PRODUCT_MESSAGES.error.loadProduct}</Typography>;

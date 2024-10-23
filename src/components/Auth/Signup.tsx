@@ -1,6 +1,8 @@
 "use client"
 // React Imports
 import React, { useEffect, useState } from "react";
+// Next Imports
+import { useRouter } from "next/navigation";
 // 3rd Party Imports
 import { useFormik } from "formik";
 import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
@@ -16,7 +18,6 @@ import { useSnackbar } from "@hooks/useSnackbar";
 import SnackbarMessage from "@components/Shared/SnackbarMessage";
 import { SIGNUP_MESSAGES } from "@constants/index"; // Importing constants for messages
 import { signup } from "@services/authApi";
-import { useRouter } from "next/navigation";
 
 const SignupPage: React.FC = () => {
   //states
