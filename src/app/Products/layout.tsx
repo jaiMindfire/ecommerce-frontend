@@ -4,10 +4,10 @@ import localFont from "next/font/local";
 //3rd Party Imports
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 // Static Imports
-import Navbar from "@components/Navbar";
+import Navbar from "@components/Navbar/Navbar";
 import StoreProvider from "@store/StoreProvider";
 import { PopupProvider } from "@store/context/LoginPopupContext";
-import ShoppingFilterPage from "@components/FilterComponent";
+import ShoppingFilterPage from "@components/Shared/FilterComponent";
 import { Box, CssBaseline } from "@mui/material";
 
 export const metadata: Metadata = {

@@ -34,7 +34,7 @@ import { logout } from "@store/redux/authSlice";
 import { setSearchTerm } from "@store/redux/productsSlice";
 import { toggleTheme } from "@store/redux/themeSlice";
 import { usePopup } from "@store/context/LoginPopupContext";
-import LoginSignupModal from "./LoginSignupModal";
+import LoginSignupModal from "@components/Auth/LoginSignupModal";
 import { APP_ICON, AVATAR_URL } from "@constants/index";
 
 // Styled Components

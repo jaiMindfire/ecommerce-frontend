@@ -6,9 +6,9 @@ import { Box, Grid, Pagination, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 // Static Imports
 import { RootState } from "@store/index";
-import ProductCard from "@components/ProductCard";
-import LoadingGrid from "@components/ProductLoaderSkeleton/LoadingProducts";
-import NoDataFound from "@components/NoDataFound";
+import ProductCard from "./ProductCard";
+import LoadingGrid from "@components/Products/ProductLoaderSkeleton/LoadingProducts";
+import NoDataFound from "@components/Products/NoDataFound";
 import { LIMIT, SCROLL_THRESHOLD, PRODUCT_LIST } from "@constants/index";
 import { PaginatedProductsResponse } from "@models/prodctsType";
 import setParams from "@utils/setParams";
@@ -69,7 +69,7 @@ const ProductListPage: React.FC<{
           },
         }}
       >
-        {!loading ? (
+        {!loading && products?.data?.length ? (
           <>
             <Grid container spacing={3} width="100%">
               {products?.data?.map((product) => (
@@ -85,6 +85,7 @@ const ProductListPage: React.FC<{
                 )}
                 page={page}
                 onChange={handlePageChange}
+                color="primary"
               />
             </Box>
           </>

@@ -1,14 +1,14 @@
 // React imports
 import { Suspense } from "react";
 // Static Imports
-import LoadingSpinner from "@components/LoadingSpinner";
-import ProductListPage from "@pages/ProductListPage";
+import LoadingSpinner from "@components/Shared/LoadingSpinner";
+import ProductListPage from "@components/Products/Products";
 import { getProductById, getProducts } from "@services/productsApi";
-import ProductDetailPage from "@pages/ProductDetailPage";
+import ProductDetailPage from "@components/Products/ProductDetail";
 import { Product } from "@models/prodctsType";
-import CartPage from "@pages/CartPage";
 import { getCart } from "@services/cartApi";
 import { CartItem, CartResponse } from "@models/cartTypes";
+import CartPage from "@components/Cart/Cart";
 
 export default async function Page() {
   let cartItems: CartResponse | undefined

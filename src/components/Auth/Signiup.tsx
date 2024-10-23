@@ -1,3 +1,4 @@
+"use client"
 // React Imports
 import React, { useEffect, useState } from "react";
 // 3rd Party Imports
@@ -6,15 +7,16 @@ import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // Static Imports
-import { useSignupMutation } from "@services/authApi";
-import { BackgroundImage, StyledPaper } from "./LoginPage";
+import { BackgroundImage, StyledPaper } from "./Login";
 import { RootState } from "@store/index";
-import SubmitButton from "@components/FormSubmitButton";
-import FormInput from "@components/FormInput";
+import SubmitButton from "@components/Shared/FormSubmitButton";
+import FormInput from "@components/Shared/FormInput";
 import { getValidationSchema } from "@utils/validationSchema";
 import { useSnackbar } from "@hooks/useSnackbar";
-import SnackbarMessage from "@components/SnackbarMessage";
+import SnackbarMessage from "@components/Shared/SnackbarMessage";
 import { SIGNUP_MESSAGES } from "@constants/index"; // Importing constants for messages
+import { signup } from "@services/authApi";
+import { useRouter } from "next/navigation";
 
 const SignupPage: React.FC = () => {
   //states
@@ -24,8 +26,7 @@ const SignupPage: React.FC = () => {
   //redux-states
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.token);
   //hooks
-  const navigate = useNavigate();
-  const [signup] = useSignupMutation(); // Mutation hook for signing up
+  const router = useRouter();
   const theme = useTheme(); // Access the theme for styling
   const { open, message, severity, showSnackbar, handleClose } = useSnackbar();
   // Formik setup for form handling
@@ -46,16 +47,14 @@ const SignupPage: React.FC = () => {
     setLoading(true);
     try {
       // Call the signup mutation
-      await signup({
-        email: values.email,
-        password: values.password,
-      }).unwrap();
-      showSnackbar(SIGNUP_MESSAGES.signupSuccess, "success"); 
+      await signup({ email: values.email, password: values.password });
+      showSnackbar(SIGNUP_MESSAGES.signupSuccess, "success");
       formik.resetForm();
-      navigate("/"); // Redirect to home page after successful signup
+      router.push("/"); // Redirect to home page after successful signup
     } catch (error: any) {
       // Show error message if signup fails
-      showSnackbar(error?.data?.message, "error");
+      console.log(error,'sdfdf')
+      showSnackbar(error?.response?.data?.message, "error");
     } finally {
       setLoading(false);
     }
@@ -64,9 +63,9 @@ const SignupPage: React.FC = () => {
   // Effect to redirect if the user is already logged in
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/"); // Redirect to home page if logged in
+      router.push("/"); // Redirect to home page if logged in
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, router.push]);
 
   return (
     <Container component="main" maxWidth="xs">

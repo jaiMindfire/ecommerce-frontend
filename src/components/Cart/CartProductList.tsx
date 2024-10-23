@@ -9,7 +9,7 @@ import { Box, Grid } from "@mui/material";
 //   useRemoveFromCartMutation,
 // } from "@services/cartApi";
 import { removeItemFromCart, updateItemQuantity } from "@store/redux/cartSlice";
-import CartProduct from "@components/CartProduct";
+import CartProduct from "@components/Cart/CartProduct";
 import { CartItem } from "@models/cartTypes";
 import { RootState } from "@store/index";
 import { removeFromCart, updateCartItem } from "@services/cartApi";

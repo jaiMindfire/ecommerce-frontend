@@ -1,7 +1,7 @@
 //3rd party imports
 import { Grid } from "@mui/material";
 //static imports
-import SkeletonCard from "@components/ProductLoaderSkeleton/SkeletonCard";
+import SkeletonCard from "@components/Products/ProductLoaderSkeleton/SkeletonCard";
 
 //Loading skeleton while products are loading
 const LoadingGrid: React.FC = () => {

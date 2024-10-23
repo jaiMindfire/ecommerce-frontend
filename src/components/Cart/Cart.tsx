@@ -11,15 +11,15 @@ import {
   mergeLocalCart,
   clearCart,
 } from "@store/redux/cartSlice";
-import CartProductList from "@components/CartProductList";
-import OrderSummary from "@components/OrderSummary";
-import NoItemsInCart from "@components/NoCartItems";
-import SnackbarMessage from "@components/SnackbarMessage";
+import CartProductList from "@components/Cart/CartProductList";
+import OrderSummary from "@components/Order/OrderSummary";
+import NoItemsInCart from "@components/Cart/NoCartItems";
+import SnackbarMessage from "@components/Shared/SnackbarMessage";
 import { setCheckedOut } from "@store/redux/productsSlice";
 import { handleMergeLocalCart } from "@utils/cartUtils";
-import OrderSuccessNotification from "./OrderSuccessPage";
+import OrderSuccessNotification from "@components/Order/OrderSuccessNotification";
 import { useSnackbar } from "@hooks/useSnackbar";
-import LoadingSpinner from "@components/LoadingSpinner";
+import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import { ThemeProvider } from "@mui/system";
 import { checkout, massAddToCart } from "@services/cartApi";
 import { CartItem, CartResponse } from "@models/cartTypes";

@@ -24,7 +24,7 @@ import { setCheckedOut } from "@store/redux/productsSlice";
 import useAddToCart from "@hooks/useAddToCart";
 import { usePopup } from "@store/context/LoginPopupContext";
 import { PRODUCT_MESSAGES } from "@constants/index";
-import LoadingSpinner from "@components/LoadingSpinner";
+import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import { Product } from "@models/prodctsType";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "@mui/system";

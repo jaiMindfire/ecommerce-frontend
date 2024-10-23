@@ -1,10 +1,10 @@
 // React imports
 import { Suspense } from "react";
 // Static Imports
-import LoadingSpinner from "@components/LoadingSpinner";
-import ProductListPage from "@pages/ProductListPage";
+import LoadingSpinner from "@components/Shared/LoadingSpinner";
+import ProductListPage from "@components/Products/Products";
 import { getProductById, getProducts } from "@services/productsApi";
-import ProductDetailPage from "@pages/ProductDetailPage";
+import ProductDetailPage from "@components/Products/ProductDetail";
 import { Product } from "@models/prodctsType";
 
 export default async function Page({ params }: { params: { id: string } }) {

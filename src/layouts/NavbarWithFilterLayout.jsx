@@ -2,8 +2,8 @@
 import { Outlet } from "react-router-dom";
 import { Box, Grid } from "@mui/material";
 //Static Imports
-import Navbar from "@components/Navbar";
-import ShoppingFilterPage from "@components/FilterComponent";
+import Navbar from "@components/Navbar/Navbar";
+import ShoppingFilterPage from "@components/Shared/FilterComponent";
 
 function NavbarWithFilterLayout() {
   return (

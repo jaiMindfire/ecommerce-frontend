@@ -18,10 +18,10 @@ import {
 } from "@mui/material";
 import { ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedProduct } from "../store/redux/productsSlice";
+import { setSelectedProduct } from "@store/redux/productsSlice";
 import { RootState } from "@store/index";
-import useAddToCart from "../hooks/useAddToCart";
-import { usePopup } from "../store/context/LoginPopupContext";
+import useAddToCart from "@hooks/useAddToCart";
+import { usePopup } from "@store/context/LoginPopupContext";
 import { Product } from "@models/prodctsType";
 import { PRODUCT_MESSAGES } from "@constants/index";
 import { useRouter } from "next/navigation";
