@@ -1,10 +1,11 @@
 // React imports
-import { Suspense } from "react";
+import { Suspense } from 'react';
 // Static Imports
-import LoadingSpinner from "@components/Shared/LoadingSpinner";
-import ProductListPage from "@components/Products/Products";
-import { getProducts } from "@services/productsApi";
-import log from "@utils/logger"
+import LoadingSpinner from '@components/Shared/LoadingSpinner';
+import ProductListPage from '@components/Products/Products';
+import { getProducts } from '@services/productsApi';
+import log from '@utils/logger';
+import ErrorBoundaryComponent from '@components/Error/ErrorBoundary';
 
 export default async function Page({
   searchParams,
@@ -15,16 +16,16 @@ export default async function Page({
     limit?: number;
     priceRange?: number[];
     categories?: string[];
-    rating?: number
+    rating?: number;
   };
 }) {
-  log.warn(searchParams, 'paramsss')
-  const search = searchParams?.search || "";
+  log.warn(searchParams, 'paramsss');
+  const search = searchParams?.search || '';
   const page = Number(searchParams?.page) || 1;
   const limit = Number(searchParams?.limit) || 8;
   const priceRange = searchParams?.priceRange || [];
   const categories = searchParams?.categories || [];
-  const rating = Number(searchParams?.rating) || 0
+  const rating = Number(searchParams?.rating) || 0;
   let products;
 
   try {
@@ -35,15 +36,17 @@ export default async function Page({
       limit,
       priceRange,
       categories,
-      rating
+      rating,
     });
   } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error('Error fetching products:', error);
   }
 
   return (
     <Suspense>
-      <ProductListPage products={products} />
+      <ErrorBoundaryComponent>
+        <ProductListPage products={products} />
+      </ErrorBoundaryComponent>
     </Suspense>
   );
 }
