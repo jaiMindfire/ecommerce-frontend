@@ -18,6 +18,7 @@ import { useSnackbar } from "@hooks/useSnackbar";
 import SnackbarMessage from "@components/Shared/SnackbarMessage";
 import { SIGNUP_MESSAGES } from "@constants/index"; // Importing constants for messages
 import { signup } from "@services/authApi";
+import log from "@utils/logger"
 
 const SignupPage: React.FC = () => {
   //states
@@ -54,7 +55,7 @@ const SignupPage: React.FC = () => {
       router.push("/"); // Redirect to home page after successful signup
     } catch (error: any) {
       // Show error message if signup fails
-      console.log(error,'sdfdf')
+      log.info(error,'sdfdf')
       showSnackbar(error?.response?.data?.message, "error");
     } finally {
       setLoading(false);

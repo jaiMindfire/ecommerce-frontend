@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartItem } from "src/types/cartTypes";
 import { RootState } from "@store/index";
+import log from "@utils/logger"
 
 interface CartState {
   items: CartItem[]; // Array of items currently in the cart
@@ -69,7 +70,7 @@ const cartSlice = createSlice({
 
     // Action to merge the local cart with the server cart data
     mergeLocalCart: (state, action: PayloadAction<CartItem[]>) => {
-      console.log("hererere"); // Debug log
+      log.info("hererere"); // Debug log
       state.newItems = [...state.items]; // Copy current items to newItems for merging
       action.payload.forEach((serverItem) => {
         const existingItem = state.items.find(

@@ -1,6 +1,7 @@
 // productService.js
 import axiosClient from "./axiosClient";
 import { PaginatedProductsResponse, Product } from "src/types/prodctsType";
+import log from "@utils/logger"
 
 // Fetch a paginated list of products with optional filters
 export const getProducts = async ({
@@ -20,7 +21,7 @@ export const getProducts = async ({
   rating?: number; // Optional rating for filtering
   sizes?: string[]; // Optional sizes for filtering
 }): Promise<PaginatedProductsResponse> => {
-  console.log(rating, categories,  'pagee')
+  log.info(rating, categories,  'pagee')
   const { data } = await axiosClient.get("/api/products", {
     params: {
       search,

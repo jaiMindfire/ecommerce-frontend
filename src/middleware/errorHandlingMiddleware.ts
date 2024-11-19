@@ -5,6 +5,7 @@ import {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "@store/index";
+import log from "@utils/logger"
 
 // Custom base query with error handling
 const errorHandlingMiddleware = (
@@ -25,7 +26,7 @@ const errorHandlingMiddleware = (
 
   return async (args, api, extraOptions) => {
     const result = await rawBaseQuery(args, api, extraOptions);
-    console.log(result, "erorrrrerere");
+    log.info(result, "erorrrrerere");
     // Modify or map status code here
     if (result.error) {
       const { status } = result.error;

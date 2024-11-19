@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import ProductListPage from "@components/Products/Products";
 import { getProducts } from "@services/productsApi";
+import log from "@utils/logger"
 
 export default async function Page({
   searchParams,
@@ -17,7 +18,7 @@ export default async function Page({
     rating?: number
   };
 }) {
-  console.log(searchParams, 'paramsss')
+  log.warn(searchParams, 'paramsss')
   const search = searchParams?.search || "";
   const page = Number(searchParams?.page) || 1;
   const limit = Number(searchParams?.limit) || 8;

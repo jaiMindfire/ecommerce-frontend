@@ -33,6 +33,7 @@ import {
 import { RootState } from "@store/index";
 import { getCategories } from "@services/productsApi";
 import setParams from "@utils/setParams";
+import log from "@utils/logger"
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 // Styled Components
@@ -108,7 +109,7 @@ const ShoppingFilterPage: React.FC = () => {
 
   // Handle rating selection change
   const handleRatingChange = (event: SelectChangeEvent<number>) => {
-    console.log(event.target.value);
+    log.info(event.target.value);
     setParams(
       searchParams,
       Number(event.target.value),
@@ -139,7 +140,7 @@ const ShoppingFilterPage: React.FC = () => {
       setCategories(data);
       setIsFetching(false);
     } catch {
-      console.log("error");
+      log.info("error");
       setIsFetching(false);
     }
   };
