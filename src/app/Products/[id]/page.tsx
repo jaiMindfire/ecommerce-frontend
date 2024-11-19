@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import { getProductById } from "@services/productsApi";
 import ProductDetailPage from "@components/Products/ProductDetail";
-import { Product } from "@models/prodctsType";
+import { Product } from "src/types/prodctsType";
 
 export const metadata: Metadata = {
   title: "Products Detail",

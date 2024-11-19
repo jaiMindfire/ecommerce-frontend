@@ -1,5 +1,5 @@
 //Static Imports
-import { CartItem, CartResponse } from "@models/cartTypes";
+import { CartItem, CartResponse } from "src/types/cartTypes";
 
 export const handleMergeLocalCart = (
   cartItems: CartResponse | undefined,

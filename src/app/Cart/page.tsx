@@ -3,7 +3,7 @@ import { Suspense } from "react";
 // Static Imports
 import LoadingSpinner from "@components/Shared/LoadingSpinner";
 import { getCart } from "@services/cartApi";
-import { CartResponse } from "@models/cartTypes";
+import { CartResponse } from "src/types/cartTypes";
 import CartPage from "@components/Cart/Cart";
 
 export default async function Page() {

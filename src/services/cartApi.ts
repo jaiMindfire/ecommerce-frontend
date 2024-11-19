@@ -1,7 +1,7 @@
 import useAxiosMutation from "@hooks/useAxiosMutation";
 import axiosClient from "./axiosClient";
-import { CartItem, CartResponse } from "@models/cartTypes";
-import { Product } from "@models/prodctsType";
+import { CartItem, CartResponse } from "src/types/cartTypes";
+import { Product } from "src/types/prodctsType";
 
 // Fetch the current user's cart
 export const getCart = async (): Promise<CartResponse> => {

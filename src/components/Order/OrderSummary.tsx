@@ -9,7 +9,7 @@ import {
   Button,
 } from "@mui/material";
 //Static Imports
-import { CartItem } from "@models/cartTypes";
+import { CartItem } from "src/types/cartTypes";
 import { CHECKOUT_TEXT } from "@constants/index";
 
 interface OrderSummaryProps {

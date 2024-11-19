@@ -10,7 +10,7 @@ import ProductCard from "./ProductCard";
 import LoadingGrid from "@components/Products/ProductLoaderSkeleton/LoadingProducts";
 import NoDataFound from "@components/Products/NoDataFound";
 import { LIMIT, SCROLL_THRESHOLD, PRODUCT_LIST } from "@constants/index";
-import { PaginatedProductsResponse } from "@models/prodctsType";
+import { PaginatedProductsResponse } from "src/types/prodctsType";
 import setParams from "@utils/setParams";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ThemeProvider } from "@mui/system";

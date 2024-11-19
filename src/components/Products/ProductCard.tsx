@@ -20,7 +20,7 @@ import { setSelectedProduct } from "@store/redux/productsSlice";
 import { RootState } from "@store/index";
 import useAddToCart from "@hooks/useAddToCart";
 import { usePopup } from "@store/context/LoginPopupContext";
-import { Product } from "@models/prodctsType";
+import { Product } from "src/types/prodctsType";
 import { PRODUCT_MESSAGES } from "@constants/index";
 import { useRouter } from "next/navigation";
 import Image from "next/image";

@@ -22,7 +22,7 @@ import { setCheckedOut } from "@store/redux/productsSlice";
 import useAddToCart from "@hooks/useAddToCart";
 import { usePopup } from "@store/context/LoginPopupContext";
 import { PRODUCT_MESSAGES } from "@constants/index";
-import { Product } from "@models/prodctsType";
+import { Product } from "src/types/prodctsType";
 import { useRouter } from "next/navigation";
 
 const ProductImageWrapper = styled("div")(({ theme }) => ({

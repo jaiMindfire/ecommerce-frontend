@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import cartReducer from "src/store/redux/cartSlice";
 import { addItemToCart, selectCartItems } from "@store/redux/cartSlice";
-import { CartItem } from "@models/cartTypes";
-import { Product } from "@models/prodctsType";
+import { CartItem } from "src/types/cartTypes";
+import { Product } from "src/types/prodctsType";
 import { RootState } from "@store/index";
 import { testStore } from "./testStore";
 import { Provider } from "react-redux";

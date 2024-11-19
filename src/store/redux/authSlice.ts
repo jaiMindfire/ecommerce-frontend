@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthResponse } from "@models/authTypes";
+import { AuthResponse } from "src/types/authTypes";
 
 //shape of the authentication state
 interface AuthState {

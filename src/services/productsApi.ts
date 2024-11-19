@@ -1,6 +1,6 @@
 // productService.js
 import axiosClient from "./axiosClient";
-import { PaginatedProductsResponse, Product } from "@models/prodctsType";
+import { PaginatedProductsResponse, Product } from "src/types/prodctsType";
 
 // Fetch a paginated list of products with optional filters
 export const getProducts = async ({

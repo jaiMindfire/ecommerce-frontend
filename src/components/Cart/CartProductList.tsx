@@ -6,7 +6,7 @@ import { Box, Grid } from "@mui/material";
 //Static Imports
 import { removeItemFromCart, updateItemQuantity } from "@store/redux/cartSlice";
 import CartProduct from "@components/Cart/CartProduct";
-import { CartItem } from "@models/cartTypes";
+import { CartItem } from "src/types/cartTypes";
 import { RootState } from "@store/index";
 import { useRemoveFromCart, useUpdateCartItem } from "@services/cartApi";
 

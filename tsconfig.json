@@ -22,7 +22,7 @@
       "@hooks/*": ["src/hooks/*"],
       "@middleware/*": ["src/middleware/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@models/*": ["src/models/*"],
+      "@models/*": ["src/types/*"],
       "@pages/*": ["src/pages/*"],
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],

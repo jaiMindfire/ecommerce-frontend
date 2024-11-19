@@ -1,6 +1,6 @@
 
 import axiosClient from './axiosClient';
-import { UserCredentials, AuthResponse } from '@models/authTypes';
+import { UserCredentials, AuthResponse } from 'src/types/authTypes';
 
 // Login API call
 export const login = async (credentials: UserCredentials): Promise<AuthResponse> => {

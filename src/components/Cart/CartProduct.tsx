@@ -15,7 +15,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 // Static Imports
-import { CartItem } from "@models/cartTypes";
+import { CartItem } from "src/types/cartTypes";
 
 // Interface for the component props
 interface CartItemProps {

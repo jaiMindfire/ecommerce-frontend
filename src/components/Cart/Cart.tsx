@@ -21,7 +21,7 @@ import OrderSuccessNotification from "@components/Order/OrderSuccessNotification
 import { useSnackbar } from "@hooks/useSnackbar";
 import { ThemeProvider } from "@mui/system";
 import { useCheckout, useMassAddToCart } from "@services/cartApi";
-import { CartResponse } from "@models/cartTypes";
+import { CartResponse } from "src/types/cartTypes";
 
 const CartPage: React.FC<{
   cartItems: CartResponse | undefined;
